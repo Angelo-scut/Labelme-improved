@@ -341,12 +341,12 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
 
-        createParabolaMode = action(
-            self.tr("Create Parabola"),
-            lambda: self.toggleDrawMode(False, createMode="parabola"),
+        createEllipseMode = action(
+            self.tr("Create Ellipse"),
+            lambda: self.toggleDrawMode(False, createMode="ellipse"),
             None,
             "objects",
-            self.tr("Start drawing parabolas"),
+            self.tr("Start drawing ellipses"),
             enabled=False,
         )
 
@@ -587,7 +587,8 @@ class MainWindow(QtWidgets.QMainWindow):
             editMode=editMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
-            createParabolaMode=createParabolaMode,
+            # createParabolaMode=createParabolaMode,
+            createEllipseMode=createEllipseMode,
             createLineMode=createLineMode,
             createPointMode=createPointMode,
             createLineStripMode=createLineStripMode,
@@ -621,6 +622,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createMode,
                 createRectangleMode,
                 createCircleMode,
+                createEllipseMode,
                 createLineMode,
                 createPointMode,
                 createLineStripMode,
@@ -638,6 +640,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createMode,
                 createRectangleMode,
                 createCircleMode,
+                createEllipseMode,
                 createLineMode,
                 createPointMode,
                 createLineStripMode,
@@ -835,7 +838,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createMode,
             self.actions.createRectangleMode,
             self.actions.createCircleMode,
-            self.actions.createParabolaMode,
+            self.actions.createEllipseMode,
             self.actions.createLineMode,
             self.actions.createPointMode,
             self.actions.createLineStripMode,
@@ -947,7 +950,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
             self.actions.createCircleMode.setEnabled(True)
-            self.actions.createParabolaMode(True)
+            self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
             self.actions.createLineMode.setEnabled(True)
             self.actions.createPointMode.setEnabled(True)
             self.actions.createLineStripMode.setEnabled(True)
@@ -956,7 +959,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(False)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
-                self.actions.createParabolaMode(True)
+                self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -964,7 +967,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
-                self.actions.createParabolaMode(True)
+                self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -972,7 +975,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
-                self.actions.createParabolaMode(True)
+                self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
                 self.actions.createLineMode.setEnabled(False)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -980,7 +983,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
-                self.actions.createParabolaMode(True)
+                self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(False)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -988,15 +991,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
-                self.actions.createParabolaMode(True)
+                self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "parabola":
+            elif createMode == "ellipse":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
-                self.actions.createParabolaMode(False)
+                self.actions.createEllipseMode.setEnabled(False)  # 加入椭圆模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -1004,7 +1007,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
-                self.actions.createParabolaMode(True)
+                self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(False)

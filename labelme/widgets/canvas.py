@@ -102,7 +102,8 @@ class Canvas(QtWidgets.QWidget):
             "polygon",
             "rectangle",
             "circle",
-            "parabola"
+            "ellipse",
+            "parabola",
             "line",
             "point",
             "linestrip",
@@ -207,6 +208,7 @@ class Canvas(QtWidgets.QWidget):
             ):
                 # Attract line to starting point and
                 # colorise to alert the user.
+                # 如果处在polygon模式，且该店与开始的点足够接近的话，那么此时在点下鼠标左键即可闭合
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
@@ -214,14 +216,19 @@ class Canvas(QtWidgets.QWidget):
                 self.line[0] = self.current[-1]  # 如果是polygon、linestrip那么还要显示最后一个点与鼠标的连线
                 self.line[1] = pos
             elif self.createMode == "rectangle":
-                self.line.points = [self.current[0], pos]
+                self.line.points = [self.current[0], pos]  # 矩形第一个点和现在的点划线
                 self.line.close()  # 如果是矩形的话，则需要显示起点到鼠标位置的矩形线
             elif self.createMode == "circle":
                 self.line.points = [self.current[0], pos]
                 self.line.shape_type = "circle"  # 如果是圆形，就显示一个圆点到鼠标位置的圆
-            elif self.createMode == "parabola":  # 新增抛物线
-                self.line.points = [self.current[0], pos]
-                self.line.shape_type = "parabola"
+            elif self.createMode == "ellipse":  # 新增椭圆
+                if len(self.current.points) < 2:
+                    self.line.points = [self.current[0], pos]
+                    self.line.shape_type = "ellipse"
+                elif len(self.current.points) == 2:
+                    self.line.points.append(pos)
+                elif len(self.current.points) == 3:
+                    self.line.points[2] = pos
             elif self.createMode == "line":
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -332,7 +339,7 @@ class Canvas(QtWidgets.QWidget):
             pos = self.transformPos(ev.posF())
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
-                if self.current:
+                if self.current:  # 如果已经点过一个点了
                     # Add point to existing shape.
                     if self.createMode == "polygon":
                         self.current.addPoint(self.line[1])
@@ -343,12 +350,17 @@ class Canvas(QtWidgets.QWidget):
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
+                    elif self.createMode == "ellipse":  # 增加椭圆功能
+                        assert len(self.current.points) > 0
+                        self.current.points = self.line.points
+                        if len(self.line.points) == 3:
+                            self.finalise()
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
                             self.finalise()
-                elif not self.outOfPixmap(pos):
+                elif not self.outOfPixmap(pos):  # 如果还没点第一个点，那么将这个点加入current并且绘制这个点
                     # Create new shape.
                     self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
@@ -357,6 +369,8 @@ class Canvas(QtWidgets.QWidget):
                     else:
                         if self.createMode == "circle":
                             self.current.shape_type = "circle"
+                        if self.createMode == "ellipse":
+                            self.current.shape_type = "ellipse"
                         self.line.points = [pos, pos]
                         self.setHiding()
                         self.drawingPolygon.emit(True)
@@ -565,6 +579,7 @@ class Canvas(QtWidgets.QWidget):
 
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
+        Shape.offset = self.offsetToCenter()
         for shape in self.shapes:
             if (shape.selected or not self._hideBackround) and self.isVisible(
                 shape
@@ -608,7 +623,7 @@ class Canvas(QtWidgets.QWidget):
         w, h = self.pixmap.width(), self.pixmap.height()
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
-    def finalise(self):
+    def finalise(self):  # 这个函数是“敲定”的意思，如果调用这个函数，那么将进入label环节
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
@@ -743,6 +758,8 @@ class Canvas(QtWidgets.QWidget):
         if self.createMode in ["polygon", "linestrip"]:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
+            self.current.points = self.current.points[0:1]
+        elif self.createMode == "ellipse":
             self.current.points = self.current.points[0:1]
         elif self.createMode == "point":
             self.current = None

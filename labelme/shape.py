@@ -4,6 +4,8 @@ import math
 from qtpy import QtCore
 from qtpy import QtGui
 
+import numpy as np
+
 import labelme.utils
 
 
@@ -34,7 +36,8 @@ class Shape(object):
     hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
     point_type = P_ROUND
     point_size = 8
-    scale = 1.0
+    scale = 1.0  # 这里声明的变量是所有具体对象共有的，所以当使用Shape.scale = 2.0时，所有的Shape类对象的scale都是2.0
+    offset = QtCore.QPoint()
 
     def __init__(
         self,
@@ -84,7 +87,7 @@ class Shape(object):
             "point",
             "line",
             "circle",
-            "parabola",
+            "ellipse",
             "linestrip",
         ]:
             raise ValueError("Unexpected shape_type: {}".format(value))
@@ -150,6 +153,49 @@ class Shape(object):
                     rectangle = self.getCircleRectFromLine(self.points)
                     line_path.addEllipse(rectangle)
                 for i in range(len(self.points)):
+                    self.drawVertex(vrtx_path, i)
+            elif self.shape_type == "ellipse":  # 画椭圆也是这样，暂时的
+                assert len(self.points) in [1, 2, 3]
+                if len(self.points) == 2:
+                    line_path.moveTo(self.points[0])
+                    line_path.lineTo(self.points[1])
+                elif len(self.points) == 3:
+                    # painter.drawEllipse(self.points[0],
+                    #                     math.sqrt(math.pow(self.points[0].x()-self.points[1].x(), 2) +
+                    #                               math.pow(self.points[0].y()-self.points[1].y(), 2)),
+                    #                     math.sqrt(math.pow(self.points[2].x() - self.points[1].x(), 2) +
+                    #                               math.pow(self.points[2].y() - self.points[1].y(), 2)))
+                    # rectangle = self.getCircleRectFromLine(self.points[0:2])
+                    # line_path.addEllipse(rectangle)
+                    # painter.drawEllipse(QtCore.QPointF(0, 0),
+                    #                     math.sqrt(math.pow(self.points[0].x() - self.points[1].x(), 2) +
+                    #                               math.pow(self.points[0].y() - self.points[1].y(), 2)),
+                    #                     math.sqrt(math.pow(self.points[2].x() - self.points[1].x(), 2) +
+                    #                               math.pow(self.points[2].y() - self.points[1].y(), 2))
+                    #                     )
+                    # painter.resetTransform()
+                    painter.translate(self.points[0])
+                    angle = math.atan((self.points[1].y()-self.points[0].y()) /
+                                      (self.points[1].x()-self.points[0].x()+np.finfo(float).eps))
+                    angle = angle * 180 / math.pi
+                    painter.rotate(angle)
+                    # line_path.addEllipse(QtCore.QPointF(0, 0),
+                    #                      math.sqrt(math.pow(self.points[0].x() - self.points[1].x(), 2) +
+                    #                                math.pow(self.points[0].y()-self.points[1].y(), 2)),
+                    #                      math.sqrt(math.pow(self.points[2].x() - self.points[1].x(), 2) +
+                    #                                math.pow(self.points[2].y() - self.points[1].y(), 2)))
+                    painter.drawEllipse(QtCore.QPointF(0, 0),
+                                        math.sqrt(math.pow(self.points[0].x() - self.points[1].x(), 2) +
+                                                  math.pow(self.points[0].y() - self.points[1].y(), 2)),
+                                        math.sqrt(math.pow(self.points[2].x() - self.points[1].x(), 2) +
+                                                  math.pow(self.points[2].y() - self.points[1].y(), 2))
+                                        )
+                    painter.resetTransform()
+                    painter.scale(self.scale, self.scale)
+                    painter.translate(self.offset)
+                    # painter.rotate(angle)
+                    # painter.translate(QtCore.QPointF(-self.points[0].x(), -self.points[0].y()))
+                for i in range(len(self.points)):  # 把关键点绘制出来
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "linestrip":
                 line_path.moveTo(self.points[0])
