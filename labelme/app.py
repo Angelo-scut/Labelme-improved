@@ -119,6 +119,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
+        self.meinv = QtWidgets.QDockWidget(self.tr("Meinv"), self)
+        self.meinv.setObjectName("Meinv")
+        self.meinv_tu = QtWidgets.QLabel()
+        self.meinv_img = QtGui.QPixmap("E:\\OneDrive\\My_paper\\Program\\MagneticLabel\\GitHub\\Labelme-improved\\labelme\\meinv.png")
+        # self.meinv_tu.setGeometry(0, 0, 50, 50)
+        # self.meinv_img = self.meinv_img.scaled(90, 20)
+        self.meinv_tu.setPixmap(self.meinv_img)
+        self.meinv.setWidget(self.meinv_tu)
+
+
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged) # 选择Label条目时光标
         self.labelList.itemDoubleClicked.connect(self.editLabel)  # 双击label时
         self.labelList.itemChanged.connect(self.labelItemChanged)  # 条目变化了
@@ -203,6 +213,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.meinv)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
@@ -686,6 +697,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.menus.view,
             (
                 self.flag_dock.toggleViewAction(),
+                self.meinv.toggleViewAction(),
                 self.label_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
                 self.file_dock.toggleViewAction(),
