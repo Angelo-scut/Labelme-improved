@@ -144,7 +144,7 @@ def bbox_for_eliipse(img_shape, shapes):  # 只支持一个椭圆的bbox，也�
             b = math.sqrt((bx - ax) ** 2 + (by - ay) ** 2)
             angle = math.atan((ay - cy) /
                               (ax - cx + np.finfo(float).eps))
-            ob_label = [cx/img_shape[1], cy/img_shape[0], a/img_shape[1], b/img_shape[0], angle]
+            ob_label = [1, cx/img_shape[1], cy/img_shape[0], a/img_shape[1], b/img_shape[0], angle]
     return ob_label
 
 def masks_to_bboxes(masks):

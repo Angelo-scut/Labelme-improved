@@ -18,7 +18,7 @@ def main():
     # args = parser.parse_args()
 
     json_file = "E:\\OneDrive\\My_paper\\Program\\Track\\YOLOtrain\\data\\NIT"#args.json_file
-    out = "E:\\OneDrive\\My_paper\\Program\\Track\\YOLOtrain\\data\\data\\train\\"
+    out = "E:\\OneDrive\\My_paper\\Program\\Track\\YOLOtrain\\datawithlabel\\NIT\\"
     color_mask = np.array([255, 0, 0], dtype=np.uint8)  # 可是化的颜色
     list = os.listdir(json_file)   # 获取json文件列表
     for i in range(0, len(list)):
@@ -35,37 +35,44 @@ def main():
                 ebbx = utils.shape.bbox_for_eliipse(img.shape, data['shapes'])
                 #captions = ['%d: %s' % (l, name) for l, name in enumerate(lbl_names)]
                 #lbl_viz = utils.draw.draw_label(lbl, img, captions)
-                out_dir = out + osp.basename(list[i])[:-5]+'_json'
-                out_dir = osp.join(osp.dirname(list[i]), out_dir)
-                if not osp.exists(out_dir):
-                    os.mkdir(out_dir)
+                # out_dir = out + osp.basename(list[i])[:-5]
+                # out_dir = osp.join(osp.dirname(list[i]), out_dir)
+                # if not osp.exists(out_dir):
+                #     os.mkdir(out_dir)
+                #
+                # bmask = np.array(lbl)
+                # bmask = bmask.astype(np.bool8)
+                # color_mask = np.array([255, 0, 0], dtype=np.uint8)
+                # im = np.array(img)
+                # im[bmask] = im[bmask] * 0.5 + color_mask * 0.5
+                # im = Image.fromarray(im)
+                # im.save(osp.join(out_dir, '{}_visual.png'.format(filename)))
 
-                bmask = np.array(lbl)
-                bmask = bmask.astype(np.bool8)
-                color_mask = np.array([255, 0, 0], dtype=np.uint8)
-                im = np.array(img)
-                im[bmask] = im[bmask] * 0.5 + color_mask * 0.5
-                im = Image.fromarray(im)
-                im.save(osp.join(out_dir, '{}_visual.png'.format(filename)))
-
-                PIL.Image.fromarray(img).save(osp.join(out_dir, '{}_source.png'.format(filename)))
-                PIL.Image.fromarray(lbl).save(osp.join(out_dir, '{}_mask.png'.format(filename)))
+                img_path = out + 'images\\'
+                label_path = out + 'labels\\'
+                PIL.Image.fromarray(img).save(osp.join(img_path, '{}.png'.format(filename)))
+                # PIL.Image.fromarray(img).save(osp.join(out_dir, '{}_source.png'.format(filename)))
+                # PIL.Image.fromarray(lbl).save(osp.join(out_dir, '{}_mask.png'.format(filename)))
                 #PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, '{}_viz.jpg'.format(filename)))
 
-                with open(osp.join(out_dir, 'label_names.txt'), 'w') as f:
-                    for lbl_name in lbl_names:
-                        f.write(lbl_name + '\n')
+                # with open(osp.join(out_dir, 'label_names.txt'), 'w') as f:
+                #     for lbl_name in lbl_names:
+                #         f.write(lbl_name + '\n')
 
                 if ebbx:
-                    with open(osp.join(out_dir, 'ellipse_box.txt'), 'w') as f:
+                    with open(osp.join(label_path, '{}.txt'.format(filename)), 'w') as f:
                         for e in ebbx:
-                            f.write(str(format(e, '.4f')) + ' ')
-                warnings.warn('info.yaml is being replaced by label_names.txt')
-                info = dict(label_names=lbl_names)
-                with open(osp.join(out_dir, 'info.yaml'), 'w') as f:
-                    yaml.safe_dump(info, f, default_flow_style=False)
-
-                print('Saved to: %s' % out_dir)
+                            if e == 1:
+                                f.write(str(e) + ' ')
+                            else:
+                                f.write(str(format(e, '.4f')) + ' ')
+                print('Saved to: %s' % filename)
+                # warnings.warn('info.yaml is being replaced by label_names.txt')
+                # info = dict(label_names=lbl_names)
+                # with open(osp.join(out_dir, 'info.yaml'), 'w') as f:
+                #     yaml.safe_dump(info, f, default_flow_style=False)
+                #
+                # print('Saved to: %s' % out_dir)
 
 def checkmsak():
     mask = Image.open('E:\\OneDrive\\My_paper\\Program\\MagneticLabel\\GitHub\\Labelme-improved\\labelme\\2-100_json\\2-100_mask.png').convert('L')
