@@ -15,6 +15,32 @@ def polygons_to_mask(img_shape, polygons, shape_type=None):
     )
     return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
 
+def ellipse_with_angle(im, x, y, major, minor, angle, color):
+    # take an existing image and plot an ellipse centered at (x,y) with a
+    # defined angle of rotation and major and minor axes.
+    # center the image so that (x,y) is at the center of the ellipse
+    # x -= int(major/2)
+    # y -= int(major/2)
+
+    # maxaxis = int(max(major, minor) + 10)
+    # create a new image in which to draw the ellipse
+    mask = np.zeros((int(2*minor+10), int(2*major+10)), dtype=np.uint8)
+    im_ellipse = PIL.Image.fromarray(mask)
+    # im_ellipse = PIL.Image.new('RGB', (maxaxis, maxaxis), (255, 255, 255))
+    draw_ellipse = PIL.ImageDraw.Draw(im_ellipse)
+
+    # draw the ellipse
+    # ellipse_box = (5, 5, major+5, minor+5)
+    draw_ellipse.ellipse([5, 5, 2*major+5, 2*minor+5], outline=3)
+
+    # rotate the new image
+    rotated = im_ellipse.rotate(angle)
+    rx, ry = rotated.size
+    # rotated.save("testmask.png")
+    # paste it into the existing image and return the result
+    # im.paste(rotated, (x, y, x+rx, y+ry), mask=rotated)
+    im.paste(rotated, (int(x-rx/2), int(y-ry/2)))
+    return im
 
 def shape_to_mask(
     img_shape, points, shape_type=None, line_width=10, point_size=5
@@ -23,6 +49,7 @@ def shape_to_mask(
     mask = PIL.Image.fromarray(mask)
     draw = PIL.ImageDraw.Draw(mask)
     xy = [tuple(point) for point in points]
+    ob_label = []
     if shape_type == "circle":
         assert len(xy) == 2, "Shape of shape_type=circle must have 2 points"
         (cx, cy), (px, py) = xy
@@ -41,6 +68,16 @@ def shape_to_mask(
         cx, cy = xy[0]
         r = point_size
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=1, fill=1)
+    elif shape_type == "ellipse":
+        assert len(xy) == 3, "Shape of shape_type=ellipse must have 3 points"
+        (cx, cy), (ax, ay), (bx, by) = xy
+        a = math.sqrt((cx - ax) ** 2 + (cy - ay) ** 2)
+        b = math.sqrt((bx - ax) ** 2 + (by - ay) ** 2)
+        angle = math.atan((ay - cy) /
+                          (ax - cx + np.finfo(float).eps))
+        # ob_label = [cx/img_shape[1], cy/img_shape[0], a/img_shape[1], b/img_shape[0], angle]
+        # angle = angle * 180 / math.pi
+        ellipse_with_angle(mask, cx, cy, a, b, angle, (255,))
     else:
         assert len(xy) > 2, "Polygon must have points more than 2"
         draw.polygon(xy=xy, outline=1, fill=1)
@@ -76,10 +113,10 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
 
 
 def labelme_shapes_to_label(img_shape, shapes):
-    logger.warn(
-        "labelme_shapes_to_label is deprecated, so please use "
-        "shapes_to_label."
-    )
+    # logger.warn(
+    #     "labelme_shapes_to_label is deprecated, so please use "
+    #     "shapes_to_label."
+    # )
 
     label_name_to_value = {"_background_": 0}
     for shape in shapes:
@@ -93,6 +130,22 @@ def labelme_shapes_to_label(img_shape, shapes):
     lbl, _ = shapes_to_label(img_shape, shapes, label_name_to_value)
     return lbl, label_name_to_value
 
+def bbox_for_eliipse(img_shape, shapes):  # 只支持一个椭圆的bbox，也就是目前仅支持用于焊接方面的检测
+    label_name_to_value = {"_background_": 0}
+    ob_label = []
+    for shape in shapes:
+        label_name = shape["label"]
+        points = shape["points"]
+        shape_type = shape.get("shape_type", None)
+        if shape_type == "ellipse":
+            xy = [tuple(point) for point in points]
+            (cx, cy), (ax, ay), (bx, by) = xy
+            a = math.sqrt((cx - ax) ** 2 + (cy - ay) ** 2)
+            b = math.sqrt((bx - ax) ** 2 + (by - ay) ** 2)
+            angle = math.atan((ay - cy) /
+                              (ax - cx + np.finfo(float).eps))
+            ob_label = [cx/img_shape[1], cy/img_shape[0], a/img_shape[1], b/img_shape[0], angle]
+    return ob_label
 
 def masks_to_bboxes(masks):
     if masks.ndim != 3:
