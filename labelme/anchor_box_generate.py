@@ -4,6 +4,8 @@ import sys
 import xml.etree.ElementTree as ET
 import numpy as np
 from scipy.cluster.vq import kmeans
+import cv2
+import matplotlib.pyplot as plt
 # from kmeans import kmeans, avg_iou
 
 # 根文件夹
@@ -21,6 +23,7 @@ def load_dataset(path):
     #     print('no JPEGImages folders, program abort')
     #     sys.exit(0)
     labels_txt = os.path.join(path, 'labels')
+    img_path = os.path.join(path, 'images')
     if not os.path.exists(labels_txt):
         print('no labels folders, program abort')
         sys.exit(0)
@@ -30,6 +33,8 @@ def load_dataset(path):
     dataset = []
 
     for label in label_file:
+        imgs = cv2.imread(os.path.join(img_path, label[0:-3]+'png'), 0)
+        shape = imgs.shape
         with open(os.path.join(labels_txt, label), 'r') as f:
             txt_content = f.readlines()
 
@@ -40,7 +45,7 @@ def load_dataset(path):
             roi_height = float(line_split[len(line_split) - 2])
             if roi_with == 0 or roi_height == 0:
                 continue
-            dataset.append([roi_with, roi_height])
+            dataset.append([roi_with * shape[1], roi_height * shape[0]])
             # print([roi_with, roi_height])
 
     return np.array(dataset)
@@ -48,6 +53,13 @@ def load_dataset(path):
 
 data = load_dataset(ROOT_PATH)
 out = kmeans(data, CLUSTERS, iter=1000)  # 对训练样本聚类
+
+x = data[:, 0]
+y = data[:, 1]
+fig = plt.figure()
+ax = plt.subplot()
+ax.scatter(x, y, s=5, alpha=0.5)  # 绘制散点图，面积随机
+plt.show()
 
 print(out)
 out = out[0]

@@ -9,6 +9,7 @@ import PIL.Image
 from PIL import Image
 # from skimage import io
 import yaml
+import cv2
 from labelme import utils
 
 def main():
@@ -16,9 +17,9 @@ def main():
     # parser.add_argument('json_file')   # 标注文件json所在的文件夹
     # parser.add_argument('-o', '--out', default=None)
     # args = parser.parse_args()
-
+    img_size = 640
     json_file = "E:\\OneDrive\\My_paper\\Program\\Track\\YOLOtrain\\data\\NIT"#args.json_file
-    out = "E:\\OneDrive\\My_paper\\Program\\Track\\YOLOtrain\\datawithlabel\\NIT\\"
+    out = "E:\\OneDrive\\My_paper\\Program\\Track\\YOLOtrain\\datawithlabel\\"
     color_mask = np.array([255, 0, 0], dtype=np.uint8)  # 可是化的颜色
     list = os.listdir(json_file)   # 获取json文件列表
     for i in range(0, len(list)):
@@ -33,12 +34,14 @@ def main():
                 lbl, lbl_names = utils.shape.labelme_shapes_to_label(img.shape, data['shapes'])   # data['shapes']是json文件中记录着标注的位置及label等信息的字段
 
                 ebbx = utils.shape.bbox_for_eliipse(img.shape, data['shapes'])
-                #captions = ['%d: %s' % (l, name) for l, name in enumerate(lbl_names)]
-                #lbl_viz = utils.draw.draw_label(lbl, img, captions)
-                # out_dir = out + osp.basename(list[i])[:-5]
-                # out_dir = osp.join(osp.dirname(list[i]), out_dir)
-                # if not osp.exists(out_dir):
-                #     os.mkdir(out_dir)
+                # captions = ['%d: %s' % (l, name) for l, name in enumerate(lbl_names)]
+                lbl_viz = utils.shape.ellipse_with_angle(img, ebbx[1]*img.shape[1], ebbx[2]*img.shape[0],
+                                                         ebbx[3]*img.shape[1], ebbx[4]*img.shape[0], ebbx[5], 255)  # cx/img_shape[1], cy/img_shape[0], a/img_shape[1], b/img_shape[0]
+                # lbl_viz = utils.draw.draw_label(lbl, img, captions)
+                out_dir = out + osp.basename(list[i])[:-5]
+                out_dir = osp.join(osp.dirname(list[i]), out_dir)
+                if not osp.exists(out_dir):
+                    os.mkdir(out_dir)
                 #
                 # bmask = np.array(lbl)
                 # bmask = bmask.astype(np.bool8)
@@ -50,10 +53,13 @@ def main():
 
                 img_path = out + 'images\\'
                 label_path = out + 'labels\\'
+                r = img_size / max(img.shape[0], img.shape[1])  # ratio 即需要将最长边缩放到设定的img_size(640)
+                img = cv2.resize(img, (int(img.shape[1] * r), int(img.shape[0] * r)),
+                                 interpolation=cv2.INTER_AREA if r < 1 else cv2.INTER_LINEAR)
                 PIL.Image.fromarray(img).save(osp.join(img_path, '{}.png'.format(filename)))
                 # PIL.Image.fromarray(img).save(osp.join(out_dir, '{}_source.png'.format(filename)))
-                # PIL.Image.fromarray(lbl).save(osp.join(out_dir, '{}_mask.png'.format(filename)))
-                #PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, '{}_viz.jpg'.format(filename)))
+                PIL.Image.fromarray(lbl).save(osp.join(out_dir, '{}_mask.png'.format(filename)))
+                PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, '{}_viz.jpg'.format(filename)))
 
                 # with open(osp.join(out_dir, 'label_names.txt'), 'w') as f:
                 #     for lbl_name in lbl_names:
@@ -61,11 +67,13 @@ def main():
 
                 if ebbx:
                     with open(osp.join(label_path, '{}.txt'.format(filename)), 'w') as f:
-                        for e in ebbx:
-                            if e == 1:
-                                f.write(str(e) + ' ')
+                        for e in range(len(ebbx)):
+                            if e == 0:
+                                f.write(str(ebbx[e]) + ' ')
+                            elif e == len(ebbx)-1:
+                                f.write(str(format(ebbx[e], '.4f')))
                             else:
-                                f.write(str(format(e, '.4f')) + ' ')
+                                f.write(str(format(ebbx[e], '.4f')) + ' ')
                 print('Saved to: %s' % filename)
                 # warnings.warn('info.yaml is being replaced by label_names.txt')
                 # info = dict(label_names=lbl_names)
