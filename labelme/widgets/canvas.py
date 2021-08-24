@@ -1,3 +1,4 @@
+import numpy as np
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -83,6 +84,8 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+        # filename
+        self.filename = None
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -103,6 +106,7 @@ class Canvas(QtWidgets.QWidget):
             "rectangle",
             "circle",
             "ellipse",
+            "livewire",
             "parabola",
             "line",
             "point",
@@ -212,6 +216,17 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
+            elif (
+                len(self.current) > 1
+                and self.createMode == "livewire"
+                and self.closeEnough(pos, self.current[0])
+            ):
+                # Attract line to starting point and
+                # colorise to alert the user.
+                # 如果处在polygon模式，且该店与开始的点足够接近的话，那么此时在点下鼠标左键即可闭合
+                pos = self.current[0]
+                self.overrideCursor(CURSOR_POINT)
+                self.current.highlightVertex(0, Shape.NEAR_VERTEX)
             if self.createMode in ["polygon", "linestrip"]:
                 self.line[0] = self.current[-1]  # 如果是polygon、linestrip那么还要显示最后一个点与鼠标的连线
                 self.line[1] = pos
@@ -229,6 +244,19 @@ class Canvas(QtWidgets.QWidget):
                     self.line.points.append(pos)
                 elif len(self.current.points) == 3:
                     self.line.points[2] = pos
+            elif self.createMode == "livewire":  # 新增磁力索引
+                self.current.lw.mPoint[0], self.current.lw.mPoint[1] = int(pos.x()), int(pos.y())
+                self.current.lw.move()
+                self.current.points = []
+                if self.current.lw.path_allx.size != 0:
+                    for i in range(self.current.lw.path_allx.size):
+                        self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
+                                                               float(self.current.lw.path_ally[i])))
+                for i in range(self.current.lw.num_point):
+                    self.current.points.append(QtCore.QPointF(float(self.current.lw.pathx_arr[i]),
+                                                           float(self.current.lw.pathy_arr[i])))
+                # self.line[0] = self.current[-1]  # 如果是polygon、linestrip那么还要显示最后一个点与鼠标的连线
+                # self.line[1] = pos
             elif self.createMode == "line":
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -355,6 +383,22 @@ class Canvas(QtWidgets.QWidget):
                         self.current.points = self.line.points
                         if len(self.line.points) == 3:
                             self.finalise()
+                    elif self.createMode == "livewire":  # 增加磁力索引功能
+                        if self.current.lw.isPath:
+                            self.current.lw.cPoint[0], self.current.lw.cPoint[1] = int(pos.x()), int(pos.y())
+                            self.current.lw.cPointx_list.append(int(pos.x()))
+                            self.current.lw.cPointy_list.append(int(pos.y()))
+                            self.current.lw.path_allx = np.concatenate((self.current.lw.path_allx,
+                                                                        self.current.lw.pathx_arr), axis=0)
+                            self.current.lw.path_ally = np.concatenate((self.current.lw.path_ally,
+                                                                        self.current.lw.pathy_arr), axis=0)
+                            self.current.lw.button()
+                        # self.current.addPoint(self.line[1])
+                        # self.line[0] = self.current[-1]
+                        if self.current.points and self.line[1] == self.current.points[0]:
+                            self.close()
+                        if self.current.isClosed():
+                            self.finalise()
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
@@ -362,7 +406,10 @@ class Canvas(QtWidgets.QWidget):
                             self.finalise()
                 elif not self.outOfPixmap(pos):  # 如果还没点第一个点，那么将这个点加入current并且绘制这个点
                     # Create new shape.
-                    self.current = Shape(shape_type=self.createMode)
+                    if self.createMode == "livewire":
+                        self.current = Shape(path=self.filename, shape_type=self.createMode)
+                    else:
+                        self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
                     if self.createMode == "point":
                         self.finalise()
@@ -371,6 +418,12 @@ class Canvas(QtWidgets.QWidget):
                             self.current.shape_type = "circle"
                         if self.createMode == "ellipse":
                             self.current.shape_type = "ellipse"
+                        if self.createMode == "livewire":
+                            self.current.shape_type = "livewire"
+                            self.current.lw.cPoint[0], self.current.lw.cPoint[1] = int(pos.x()), int(pos.y())
+                            self.current.lw.cPointx_list.append(int(pos.x()))
+                            self.current.lw.cPointy_list.append(int(pos.y()))
+                            self.current.lw.button()
                         self.line.points = [pos, pos]
                         self.setHiding()
                         self.drawingPolygon.emit(True)

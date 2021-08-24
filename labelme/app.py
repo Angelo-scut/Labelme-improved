@@ -122,7 +122,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.meinv = QtWidgets.QDockWidget(self.tr("Meinv"), self)
         self.meinv.setObjectName("Meinv")
         self.meinv_tu = QtWidgets.QLabel()
-        self.meinv_img = QtGui.QPixmap("E:\\OneDrive\\My_paper\\Program\\MagneticLabel\\GitHub\\Labelme-improved\\labelme\\meinv.png")
+        self.meinv_img = QtGui.QPixmap(".\\meinv.png")
         # self.meinv_tu.setGeometry(0, 0, 50, 50)
         # self.meinv_img = self.meinv_img.scaled(90, 20)
         self.meinv_tu.setPixmap(self.meinv_img)
@@ -358,6 +358,15 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             "objects",
             self.tr("Start drawing ellipses"),
+            enabled=False,
+        )
+
+        createLivewireMode = action(
+            self.tr("Create Livewire"),
+            lambda: self.toggleDrawMode(False, createMode="livewire"),
+            None,
+            "objects",
+            self.tr("Start drawing livewire"),
             enabled=False,
         )
 
@@ -600,6 +609,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createCircleMode=createCircleMode,
             # createParabolaMode=createParabolaMode,
             createEllipseMode=createEllipseMode,
+            createLivewireMode=createLivewireMode,
             createLineMode=createLineMode,
             createPointMode=createPointMode,
             createLineStripMode=createLineStripMode,
@@ -634,6 +644,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createRectangleMode,
                 createCircleMode,
                 createEllipseMode,
+                createLivewireMode,
                 createLineMode,
                 createPointMode,
                 createLineStripMode,
@@ -652,6 +663,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createRectangleMode,
                 createCircleMode,
                 createEllipseMode,
+                createLivewireMode,
                 createLineMode,
                 createPointMode,
                 createLineStripMode,
@@ -851,6 +863,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createRectangleMode,
             self.actions.createCircleMode,
             self.actions.createEllipseMode,
+            self.actions.createLivewireMode,
             self.actions.createLineMode,
             self.actions.createPointMode,
             self.actions.createLineStripMode,
@@ -958,11 +971,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def toggleDrawMode(self, edit=True, createMode="polygon"):
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
+        self.canvas.filename = self.filename
         if edit:
             self.actions.createMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
             self.actions.createCircleMode.setEnabled(True)
             self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+            self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
             self.actions.createLineMode.setEnabled(True)
             self.actions.createPointMode.setEnabled(True)
             self.actions.createLineStripMode.setEnabled(True)
@@ -972,6 +987,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -980,6 +996,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createRectangleMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -988,6 +1005,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
                 self.actions.createLineMode.setEnabled(False)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -996,6 +1014,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(False)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -1004,6 +1023,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
                 self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -1012,6 +1032,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createEllipseMode.setEnabled(False)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            elif createMode == "livewire":
+                self.actions.createMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(False)  # 加入磁力索引模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
@@ -1020,6 +1050,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createEllipseMode.setEnabled(True)  # 加入椭圆模式
+                self.actions.createLivewireMode.setEnabled(True)  # 加入磁力索引模式
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(False)

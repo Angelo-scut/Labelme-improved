@@ -7,8 +7,8 @@ from qtpy import QtGui
 import numpy as np
 
 import labelme.utils
-
-
+# from labelme.cython.lwclass import lwclass
+from lwclass import lwclass
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
@@ -41,6 +41,7 @@ class Shape(object):
 
     def __init__(
         self,
+        path=None,
         label=None,
         line_color=None,
         shape_type=None,
@@ -73,6 +74,9 @@ class Shape(object):
 
         self.shape_type = shape_type
 
+        if path is not None:
+            self.lw = lwclass(path)
+
     @property
     def shape_type(self):
         return self._shape_type
@@ -88,6 +92,7 @@ class Shape(object):
             "line",
             "circle",
             "ellipse",
+            "livewire",
             "linestrip",
         ]:
             raise ValueError("Unexpected shape_type: {}".format(value))
@@ -197,6 +202,23 @@ class Shape(object):
                     # painter.translate(QtCore.QPointF(-self.points[0].x(), -self.points[0].y()))
                 for i in range(len(self.points)):  # 把关键点绘制出来
                     self.drawVertex(vrtx_path, i)
+            elif self.shape_type == "livewire":  # 画椭圆也是这样，暂时的
+                line_path.moveTo(self.points[0])
+                for i, p in enumerate(self.points): # 从最近点开始绘制到p点的直线
+                    line_path.lineTo(p)
+                # line_path.moveTo(self.points[0])
+                # # Uncommenting the following line will draw 2 paths
+                # # for the 1st vertex, and make it non-filled, which
+                # # may be desirable.
+                # # self.drawVertex(vrtx_path, 0)
+                #
+                # for i, p in enumerate(self.points):
+                #     line_path.lineTo(p)
+                #     self.drawVertex(vrtx_path, i)
+                # if self.isClosed():
+                #     line_path.lineTo(self.points[0])
+                # for i in range(len(self.points)):  # 把关键点绘制出来
+                #     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "linestrip":
                 line_path.moveTo(self.points[0])
                 for i, p in enumerate(self.points):
@@ -215,8 +237,9 @@ class Shape(object):
                 if self.isClosed():
                     line_path.lineTo(self.points[0])
             painter.drawPath(line_path)
-            painter.drawPath(vrtx_path)
-            painter.fillPath(vrtx_path, self._vertex_fill_color)
+            if self.shape_type != "livewire":
+                painter.drawPath(vrtx_path)
+                painter.fillPath(vrtx_path, self._vertex_fill_color)
             if self.fill:
                 color = (
                     self.select_fill_color
