@@ -384,6 +384,12 @@ class Canvas(QtWidgets.QWidget):
                         if len(self.line.points) == 3:
                             self.finalise()
                     elif self.createMode == "livewire":  # 增加磁力索引功能
+                        if self.closeEnough(pos, self.current[0]):
+                            pos = self.current[0]
+                            self.current.close()
+                            self.current.lw.mPoint[0], self.current.lw.mPoint[1] = int(pos.x()), int(pos.y())
+                            self.current.lw.move()
+                            self.current.points = []
                         if self.current.lw.isPath:
                             self.current.lw.cPoint[0], self.current.lw.cPoint[1] = int(pos.x()), int(pos.y())
                             self.current.lw.cPointx_list.append(int(pos.x()))
@@ -392,12 +398,15 @@ class Canvas(QtWidgets.QWidget):
                                                                         self.current.lw.pathx_arr), axis=0)
                             self.current.lw.path_ally = np.concatenate((self.current.lw.path_ally,
                                                                         self.current.lw.pathy_arr), axis=0)
+                            self.current.lw.num_list.append(self.current.lw.num_point)
                             self.current.lw.button()
-                        # self.current.addPoint(self.line[1])
-                        # self.line[0] = self.current[-1]
-                        if self.current.points and self.line[1] == self.current.points[0]:
-                            self.close()
                         if self.current.isClosed():
+                            if self.current.lw.path_allx.size != 0:
+                                for i in range(self.current.lw.path_allx.size):
+                                    self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
+                                                                              float(self.current.lw.path_ally[i])))
+                            self.current.points.append(pos)
+                            self.repaint()
                             self.finalise()
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
@@ -433,6 +442,23 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
+        elif ev.button() == QtCore.Qt.RightButton and self.drawing() and self.createMode == "livewire":
+            if self.current.lw.isPath and self.current:
+                if len(self.current.lw.num_list) >= 1:
+                    num = self.current.lw.num_list[-1]
+                    del self.current.lw.num_list[-1]
+                    self.current.lw.cPoint[0], self.current.lw.cPoint[1] = \
+                        self.current.lw.path_allx[self.current.lw.path_allx.size - num], \
+                        self.current.lw.path_ally[self.current.lw.path_allx.size - num]
+                    self.current.lw.path_allx = self.current.lw.path_allx[:(self.current.lw.path_allx.size - num)]
+                    self.current.lw.path_ally = self.current.lw.path_ally[:(self.current.lw.path_ally.size - num)]
+                    self.current.lw.button()
+                    self.current.points = []
+                    if self.current.lw.path_allx.size != 0:
+                        for i in range(self.current.lw.path_allx.size):
+                            self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
+                                                                      float(self.current.lw.path_ally[i])))
+                    self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
             self.selectShapePoint(pos, multiple_selection_mode=group_mode)
@@ -440,7 +466,7 @@ class Canvas(QtWidgets.QWidget):
             self.repaint()
 
     def mouseReleaseEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton:
+        if ev.button() == QtCore.Qt.RightButton and self.createMode != "livewire":
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
             if (
