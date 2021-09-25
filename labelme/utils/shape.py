@@ -46,7 +46,7 @@ def ellipse_with_angle(im, x, y, major, minor, angle, color, thickness=3):
     return ellipse_im
 
 def shape_to_mask(
-    img_shape, points, shape_type=None, line_width=10, point_size=5
+    img_shape, points, shape_type=None, line_width=10, point_size=5, isClose = False
 ):
     mask = np.zeros(img_shape[:2], dtype=np.uint8)
     mask = PIL.Image.fromarray(mask)
@@ -81,6 +81,12 @@ def shape_to_mask(
         # ob_label = [cx/img_shape[1], cy/img_shape[0], a/img_shape[1], b/img_shape[0], angle]
         # angle = angle * 180 / math.pi
         ellipse_with_angle(mask, cx, cy, a, b, angle, (255,))
+    elif shape_type == "livewire":
+        if isClose:
+            assert len(xy) > 2, "Polygon must have points more than 2"
+            draw.polygon(xy=xy, outline=1, fill=1)
+        else:
+            draw.line(xy=xy, fill=1, width=line_width)
     else:
         assert len(xy) > 2, "Polygon must have points more than 2"
         draw.polygon(xy=xy, outline=1, fill=1)
@@ -88,7 +94,7 @@ def shape_to_mask(
     return mask
 
 
-def shapes_to_label(img_shape, shapes, label_name_to_value):
+def shapes_to_label(img_shape, shapes, label_name_to_value, line_width=10, point_size=5, isClose=False):
     cls = np.zeros(img_shape[:2], dtype=np.int32)
     ins = np.zeros_like(cls)
     instances = []
@@ -108,14 +114,14 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         ins_id = instances.index(instance) + 1
         cls_id = label_name_to_value[cls_name]
 
-        mask = shape_to_mask(img_shape[:2], points, shape_type)
+        mask = shape_to_mask(img_shape[:2], points, shape_type, line_width=line_width, point_size=point_size, isClose=isClose)
         cls[mask] = cls_id
         ins[mask] = ins_id
 
     return cls, ins
 
 
-def labelme_shapes_to_label(img_shape, shapes):
+def labelme_shapes_to_label(img_shape, shapes, line_width=10, point_size=5, isClose=False):
     # logger.warn(
     #     "labelme_shapes_to_label is deprecated, so please use "
     #     "shapes_to_label."
@@ -130,7 +136,7 @@ def labelme_shapes_to_label(img_shape, shapes):
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
 
-    lbl, _ = shapes_to_label(img_shape, shapes, label_name_to_value)
+    lbl, _ = shapes_to_label(img_shape, shapes, label_name_to_value, line_width=line_width, point_size=point_size, isClose=isClose)
     return lbl, label_name_to_value
 
 
