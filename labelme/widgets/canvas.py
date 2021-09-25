@@ -443,22 +443,23 @@ class Canvas(QtWidgets.QWidget):
                 self.prevPoint = pos
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.drawing() and self.createMode == "livewire":
-            if self.current.lw.isPath and self.current:
-                if len(self.current.lw.num_list) >= 1:
-                    num = self.current.lw.num_list[-1]
-                    del self.current.lw.num_list[-1]
-                    self.current.lw.cPoint[0], self.current.lw.cPoint[1] = \
-                        self.current.lw.path_allx[self.current.lw.path_allx.size - num], \
-                        self.current.lw.path_ally[self.current.lw.path_allx.size - num]
-                    self.current.lw.path_allx = self.current.lw.path_allx[:(self.current.lw.path_allx.size - num)]
-                    self.current.lw.path_ally = self.current.lw.path_ally[:(self.current.lw.path_ally.size - num)]
-                    self.current.lw.button()
-                    self.current.points = []
-                    if self.current.lw.path_allx.size != 0:
-                        for i in range(self.current.lw.path_allx.size):
-                            self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
-                                                                      float(self.current.lw.path_ally[i])))
-                    self.repaint()
+            if self.current:
+                if self.current.lw.isPath and self.current:
+                    if len(self.current.lw.num_list) >= 1:
+                        num = self.current.lw.num_list[-1]
+                        del self.current.lw.num_list[-1]
+                        self.current.lw.cPoint[0], self.current.lw.cPoint[1] = \
+                            self.current.lw.path_allx[self.current.lw.path_allx.size - num], \
+                            self.current.lw.path_ally[self.current.lw.path_allx.size - num]
+                        self.current.lw.path_allx = self.current.lw.path_allx[:(self.current.lw.path_allx.size - num)]
+                        self.current.lw.path_ally = self.current.lw.path_ally[:(self.current.lw.path_ally.size - num)]
+                        self.current.lw.button()
+                        self.current.points = []
+                        if self.current.lw.path_allx.size != 0:
+                            for i in range(self.current.lw.path_allx.size):
+                                self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
+                                                                          float(self.current.lw.path_ally[i])))
+                        self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
             self.selectShapePoint(pos, multiple_selection_mode=group_mode)
@@ -540,9 +541,23 @@ class Canvas(QtWidgets.QWidget):
             self.double_click == "close"
             and self.canCloseShape()
             and len(self.current) > 3
+            and self.createMode != "livewire"
         ):
             self.current.popPoint()
             self.finalise()
+        elif (
+                self.double_click == "close"
+                and self.canCloseShape()
+                and len(self.current) > 3
+                and self.createMode == "livewire"
+        ):
+            if self.current.lw.path_allx.size != 0:
+                self.current.points = []
+                for i in range(self.current.lw.path_allx.size - self.current.lw.pathx_arr.size):
+                    self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
+                                                              float(self.current.lw.path_ally[i])))
+                self.repaint()
+                self.finalise()
 
     def selectShapes(self, shapes):
         self.setHiding()
