@@ -13,16 +13,17 @@ import numpy as np
 # cdef class mylivewire:
 def button_even(imgF, cPoint):
     img = imgF.reshape(imgF.shape[0] * imgF.shape[1])
+    #img = imgF.copy()
     if not img.flags['C_CONTIGUOUS']:
         img = np.ascontiguousarray(img)  # Makes a contiguous copy of the numpy array.
     cdef int[::1] cPoint_memivew = cPoint
     cdef double[::1] img_memview = img
-    iPX = np.zeros(imgF.shape, np.int32)
-    iPY = np.zeros(imgF.shape, np.int32)
-    lE = np.zeros(imgF.shape, np.int32)
-    iPX = iPX.reshape(imgF.shape[0] * imgF.shape[1])
-    iPY = iPY.reshape(imgF.shape[0] * imgF.shape[1])
-    lE = lE.reshape(imgF.shape[0] * imgF.shape[1])
+    iPX = np.zeros(imgF.shape[0] * imgF.shape[1], np.int32)
+    iPY = np.zeros(imgF.shape[0] * imgF.shape[1], np.int32)
+    lE = np.zeros(imgF.shape[0] * imgF.shape[1], np.int32)
+    #iPX = iPX.reshape(rows * cols)  # (imgF.shape[0] * imgF.shape[1])
+    #iPY = iPY.reshape(rows * cols)  # (imgF.shape[0] * imgF.shape[1])
+    #lE = lE.reshape(rows * cols)  # (imgF.shape[0] * imgF.shape[1])
     if not iPX.flags['C_CONTIGUOUS']:
         iPX = np.ascontiguousarray(iPX)
     if not iPY.flags['C_CONTIGUOUS']:
@@ -40,6 +41,7 @@ def button_even(imgF, cPoint):
     return cPoint, iPX, iPY
 def move_event(imgF, cPoint, mPoint, iPX, iPY, pathx, pathy):
     img = imgF.reshape(imgF.shape[0] * imgF.shape[1])
+    #img = imgF.copy()
     if not img.flags['C_CONTIGUOUS']:
         img = np.ascontiguousarray(img) # Makes a contiguous copy of the numpy array.
     pathx = np.zeros(10000, np.int32)

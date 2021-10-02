@@ -9,6 +9,8 @@ class lwclass:
         self.img = cv2.imread(path, 1)
         self.imgF = self.calcLiveWireCostFcn(cv2.cvtColor(self.img, cv2.COLOR_RGB2GRAY))
         self.imgF = self.imgF.astype(np.double)
+        if self.imgF.shape[0] > self.imgF.shape[1]:
+            self.imgFR = cv2.rotate(self.imgF, cv2.ROTATE_90_CLOCKWISE)
         self.cPoint = np.array([0, 0], dtype=np.int32)
         self.mPoint = np.array([0, 0], dtype=np.int32)
         self.iPX = np.zeros(self.imgF.shape, np.int32)
@@ -51,15 +53,36 @@ class lwclass:
         return pG * imgG + pE * imgE
 
     def move(self):
-        self.num_point, self.mPoint, self.pathx_arr, self.pathy_arr = move_event(self.imgF, self.cPoint, self.mPoint,
-                                                                self.iPX, self.iPY, self.pathx_arr, self.pathy_arr)
-        self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), self.pathx_arr[:self.num_point]), axis=0)
-        self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), self.pathy_arr[:self.num_point]), axis=0)
-        self.num_point += 1
+        if self.imgF.shape[0] > self.imgF.shape[1]:
+            temp = self.mPoint[1]
+            self.mPoint[1] = self.mPoint[0]
+            self.mPoint[0] = self.imgF.shape[0] - temp
+            self.num_point, self.mPoint, self.pathx_arr, self.pathy_arr = move_event(self.imgFR, self.cPoint,
+                                                                                     self.mPoint,
+                                                                                     self.iPX, self.iPY, self.pathx_arr,
+                                                                                     self.pathy_arr)
+            self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), self.pathx_arr[:self.num_point]), axis=0)
+            self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), self.pathy_arr[:self.num_point]), axis=0)
+            self.num_point += 1
+        else:
+            self.num_point, self.mPoint, self.pathx_arr, self.pathy_arr = move_event(self.imgF, self.cPoint,
+                                                                                     self.mPoint,
+                                                                                     self.iPX, self.iPY, self.pathx_arr,
+                                                                                     self.pathy_arr)
+            self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), self.pathx_arr[:self.num_point]), axis=0)
+            self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), self.pathy_arr[:self.num_point]), axis=0)
+            self.num_point += 1
 
     def button(self):
-        self.cPoint, self.iPX, self.iPY = button_even(self.imgF, self.cPoint)
-        self.isPath = True
+        if self.imgF.shape[0] > self.imgF.shape[1]:
+            temp = self.cPoint[1]
+            self.cPoint[1] = self.cPoint[0]
+            self.cPoint[0] = self.imgF.shape[0] - temp
+            self.cPoint, self.iPX, self.iPY = button_even(self.imgFR, self.cPoint)
+            self.isPath = True
+        else:
+            self.cPoint, self.iPX, self.iPY = button_even(self.imgF, self.cPoint)
+            self.isPath = True
 
     def on_mouse(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDBLCLK:
