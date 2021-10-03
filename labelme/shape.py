@@ -8,7 +8,7 @@ import numpy as np
 
 import labelme.utils
 # from labelme.cython.lwclass import lwclass
-from lwclass import lwclass
+# from lwclass import lwclass
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
@@ -74,8 +74,8 @@ class Shape(object):
 
         self.shape_type = shape_type
 
-        if path is not None:
-            self.lw = lwclass(path)
+        # if path is not None:
+        #     self.lw = lwclass(path)
 
     @property
     def shape_type(self):

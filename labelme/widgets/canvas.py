@@ -6,7 +6,7 @@ from qtpy import QtWidgets
 from labelme import QT5
 from labelme.shape import Shape
 import labelme.utils
-
+from lwclass import lwclass
 
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
@@ -86,6 +86,7 @@ class Canvas(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
         # filename
         self.filename = None
+        self.lw = None
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -245,28 +246,28 @@ class Canvas(QtWidgets.QWidget):
                 elif len(self.current.points) == 3:
                     self.line.points[2] = pos
             elif self.createMode == "livewire":  # 新增磁力索引
-                self.current.lw.mPoint[0], self.current.lw.mPoint[1] = int(pos.x()), int(pos.y())
-                self.current.lw.move()
+                self.lw.mPoint[0], self.lw.mPoint[1] = int(pos.x()), int(pos.y())
+                self.lw.move()
                 self.current.points = []
-                if self.current.lw.path_allx.size != 0:
-                    if self.current.lw.imgF.shape[0] > self.current.lw.imgF.shape[1]:
-                        for i in range(self.current.lw.path_allx.size):
-                            self.current.points.append(QtCore.QPointF(float(self.current.lw.path_ally[i]),
-                                                                   float(self.current.lw.imgF.shape[0] -
-                                                                         self.current.lw.path_allx[i])))
+                if self.lw.path_allx.size != 0:
+                    if self.lw.imgF.shape[0] > self.lw.imgF.shape[1]:
+                        for i in range(self.lw.path_allx.size):
+                            self.current.points.append(QtCore.QPointF(float(self.lw.path_ally[i]),
+                                                                   float(self.lw.imgF.shape[0] -
+                                                                         self.lw.path_allx[i])))
                     else:
-                        for i in range(self.current.lw.path_allx.size):
-                            self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
-                                                                   float(self.current.lw.path_ally[i])))
-                if self.current.lw.imgF.shape[0] > self.current.lw.imgF.shape[1]:
-                    for i in range(self.current.lw.num_point):
-                        self.current.points.append(QtCore.QPointF(float(self.current.lw.pathy_arr[i]),
-                                                               float(self.current.lw.imgF.shape[0] -
-                                                                     self.current.lw.pathx_arr[i])))
+                        for i in range(self.lw.path_allx.size):
+                            self.current.points.append(QtCore.QPointF(float(self.lw.path_allx[i]),
+                                                                   float(self.lw.path_ally[i])))
+                if self.lw.imgF.shape[0] > self.lw.imgF.shape[1]:
+                    for i in range(self.lw.num_point):
+                        self.current.points.append(QtCore.QPointF(float(self.lw.pathy_arr[i]),
+                                                               float(self.lw.imgF.shape[0] -
+                                                                     self.lw.pathx_arr[i])))
                 else:
-                    for i in range(self.current.lw.num_point):
-                        self.current.points.append(QtCore.QPointF(float(self.current.lw.pathx_arr[i]),
-                                                               float(self.current.lw.pathy_arr[i])))
+                    for i in range(self.lw.num_point):
+                        self.current.points.append(QtCore.QPointF(float(self.lw.pathx_arr[i]),
+                                                               float(self.lw.pathy_arr[i])))
                 # self.line[0] = self.current[-1]  # 如果是polygon、linestrip那么还要显示最后一个点与鼠标的连线
                 # self.line[1] = pos
             elif self.createMode == "line":
@@ -399,30 +400,30 @@ class Canvas(QtWidgets.QWidget):
                         if self.closeEnough(pos, self.current[0]):
                             pos = self.current[0]
                             self.current.close()
-                            self.current.lw.mPoint[0], self.current.lw.mPoint[1] = int(pos.x()), int(pos.y())
-                            self.current.lw.move()
+                            self.lw.mPoint[0], self.lw.mPoint[1] = int(pos.x()), int(pos.y())
+                            self.lw.move()
                             self.current.points = []
-                        if self.current.lw.isPath:
-                            self.current.lw.cPoint[0], self.current.lw.cPoint[1] = int(pos.x()), int(pos.y())
-                            self.current.lw.cPointx_list.append(int(pos.x()))
-                            self.current.lw.cPointy_list.append(int(pos.y()))
-                            self.current.lw.path_allx = np.concatenate((self.current.lw.path_allx,
-                                                                        self.current.lw.pathx_arr), axis=0)
-                            self.current.lw.path_ally = np.concatenate((self.current.lw.path_ally,
-                                                                        self.current.lw.pathy_arr), axis=0)
-                            self.current.lw.num_list.append(self.current.lw.num_point)
-                            self.current.lw.button()
+                        if self.lw.isPath:
+                            self.lw.cPoint[0], self.lw.cPoint[1] = int(pos.x()), int(pos.y())
+                            self.lw.cPointx_list.append(int(pos.x()))
+                            self.lw.cPointy_list.append(int(pos.y()))
+                            self.lw.path_allx = np.concatenate((self.lw.path_allx,
+                                                                self.lw.pathx_arr), axis=0)
+                            self.lw.path_ally = np.concatenate((self.lw.path_ally,
+                                                                self.lw.pathy_arr), axis=0)
+                            self.lw.num_list.append(self.lw.num_point)
+                            self.lw.button()
                         if self.current.isClosed():
-                            if self.current.lw.path_allx.size != 0:
-                                if self.current.lw.imgF.shape[0] > self.current.lw.imgF.shape[1]:
-                                    for i in range(self.current.lw.path_allx.size):
-                                        self.current.points.append(QtCore.QPointF(float(self.current.lw.path_ally[i]),
-                                                                                  float(self.current.lw.imgF.shape[0] -
-                                                                                        self.current.lw.path_allx[i])))
+                            if self.lw.path_allx.size != 0:
+                                if self.lw.imgF.shape[0] > self.lw.imgF.shape[1]:
+                                    for i in range(self.lw.path_allx.size):
+                                        self.current.points.append(QtCore.QPointF(float(self.lw.path_ally[i]),
+                                                                                  float(self.lw.imgF.shape[0] -
+                                                                                        self.lw.path_allx[i])))
                                 else:
-                                    for i in range(self.current.lw.path_allx.size):
-                                        self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
-                                                                                  float(self.current.lw.path_ally[i])))
+                                    for i in range(self.lw.path_allx.size):
+                                        self.current.points.append(QtCore.QPointF(float(self.lw.path_allx[i]),
+                                                                                  float(self.lw.path_ally[i])))
                             self.current.points.append(pos)
                             self.repaint()
                             self.finalise()
@@ -435,6 +436,10 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     if self.createMode == "livewire":
                         self.current = Shape(path=self.filename, shape_type=self.createMode)
+                        if self.lw is None:
+                            self.lw = lwclass(self.filename)
+                        else:
+                            self.lw.initiate(self.filename)
                     else:
                         self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
@@ -447,10 +452,10 @@ class Canvas(QtWidgets.QWidget):
                             self.current.shape_type = "ellipse"
                         if self.createMode == "livewire":
                             self.current.shape_type = "livewire"
-                            self.current.lw.cPoint[0], self.current.lw.cPoint[1] = int(pos.x()), int(pos.y())
-                            self.current.lw.cPointx_list.append(int(pos.x()))
-                            self.current.lw.cPointy_list.append(int(pos.y()))
-                            self.current.lw.button()
+                            self.lw.cPoint[0], self.lw.cPoint[1] = int(pos.x()), int(pos.y())
+                            self.lw.cPointx_list.append(int(pos.x()))
+                            self.lw.cPointy_list.append(int(pos.y()))
+                            self.lw.button()
                         self.line.points = [pos, pos]
                         self.setHiding()
                         self.drawingPolygon.emit(True)
@@ -462,33 +467,33 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.drawing() and self.createMode == "livewire":
             if self.current:
-                if self.current.lw.isPath and self.current:
-                    if len(self.current.lw.num_list) >= 1:
-                        num = self.current.lw.num_list[-1]
-                        del self.current.lw.num_list[-1]
-                        if self.current.lw.imgF.shape[0] > self.current.lw.imgF.shape[1]:
-                            self.current.lw.cPoint[0], self.current.lw.cPoint[1] = \
-                                self.current.lw.path_ally[self.current.lw.path_allx.size - num], \
-                                self.current.lw.imgF.shape[0] - \
-                                self.current.lw.path_allx[self.current.lw.path_allx.size - num]
+                if self.lw.isPath and self.current:
+                    if len(self.lw.num_list) >= 1:
+                        num = self.lw.num_list[-1]
+                        del self.lw.num_list[-1]
+                        if self.lw.imgF.shape[0] > self.lw.imgF.shape[1]:
+                            self.lw.cPoint[0], self.lw.cPoint[1] = \
+                                self.lw.path_ally[self.lw.path_allx.size - num], \
+                                self.lw.imgF.shape[0] - \
+                                self.lw.path_allx[self.lw.path_allx.size - num]
                         else:
-                            self.current.lw.cPoint[0], self.current.lw.cPoint[1] = \
-                                self.current.lw.path_allx[self.current.lw.path_allx.size - num], \
-                                self.current.lw.path_ally[self.current.lw.path_allx.size - num]
-                        self.current.lw.path_allx = self.current.lw.path_allx[:(self.current.lw.path_allx.size - num)]
-                        self.current.lw.path_ally = self.current.lw.path_ally[:(self.current.lw.path_ally.size - num)]
-                        self.current.lw.button()
+                            self.lw.cPoint[0], self.lw.cPoint[1] = \
+                                self.lw.path_allx[self.lw.path_allx.size - num], \
+                                self.lw.path_ally[self.lw.path_allx.size - num]
+                        self.lw.path_allx = self.lw.path_allx[:(self.lw.path_allx.size - num)]
+                        self.lw.path_ally = self.lw.path_ally[:(self.lw.path_ally.size - num)]
+                        self.lw.button()
                         self.current.points = []
-                        if self.current.lw.path_allx.size != 0:
-                            if self.current.lw.imgF.shape[0] > self.current.lw.imgF.shape[1]:
-                                for i in range(self.current.lw.path_allx.size):
-                                    self.current.points.append(QtCore.QPointF(float(self.current.lw.path_ally[i]),
-                                                                              float(self.current.lw.imgF.shape[0] -
-                                                                                    self.current.lw.path_allx[i])))
+                        if self.lw.path_allx.size != 0:
+                            if self.lw.imgF.shape[0] > self.lw.imgF.shape[1]:
+                                for i in range(self.lw.path_allx.size):
+                                    self.current.points.append(QtCore.QPointF(float(self.lw.path_ally[i]),
+                                                                              float(self.lw.imgF.shape[0] -
+                                                                                    self.lw.path_allx[i])))
                             else:
-                                for i in range(self.current.lw.path_allx.size):
-                                    self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
-                                                                              float(self.current.lw.path_ally[i])))
+                                for i in range(self.lw.path_allx.size):
+                                    self.current.points.append(QtCore.QPointF(float(self.lw.path_allx[i]),
+                                                                              float(self.lw.path_ally[i])))
                         self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
@@ -581,17 +586,17 @@ class Canvas(QtWidgets.QWidget):
                 and len(self.current) > 3
                 and self.createMode == "livewire"
         ):
-            if self.current.lw.path_allx.size != 0:
+            if self.lw.path_allx.size != 0:
                 self.current.points = []
-                if self.current.lw.imgF.shape[0] > self.current.lw.imgF.shape[1]:
-                    for i in range(self.current.lw.path_allx.size - self.current.lw.pathx_arr.size):
-                        self.current.points.append(QtCore.QPointF(float(self.current.lw.path_ally[i]),
-                                                                  float(self.current.lw.imgF.shape[0] -
-                                                                        self.current.lw.path_allx[i])))
+                if self.lw.imgF.shape[0] > self.lw.imgF.shape[1]:
+                    for i in range(self.lw.path_allx.size - self.lw.pathx_arr.size):
+                        self.current.points.append(QtCore.QPointF(float(self.lw.path_ally[i]),
+                                                                  float(self.lw.imgF.shape[0] -
+                                                                        self.lw.path_allx[i])))
                 else:
-                    for i in range(self.current.lw.path_allx.size - self.current.lw.pathx_arr.size):
-                        self.current.points.append(QtCore.QPointF(float(self.current.lw.path_allx[i]),
-                                                                  float(self.current.lw.path_ally[i])))
+                    for i in range(self.lw.path_allx.size - self.lw.pathx_arr.size):
+                        self.current.points.append(QtCore.QPointF(float(self.lw.path_allx[i]),
+                                                                  float(self.lw.path_ally[i])))
                 self.repaint()
                 self.finalise()
 
@@ -757,7 +762,8 @@ class Canvas(QtWidgets.QWidget):
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
-        self.storeShapes()
+        if self.createMode != "livewire":
+            self.storeShapes()  # 这里消耗了大量的内存
         self.current = None
         self.setHiding(False)
         self.newShape.emit()

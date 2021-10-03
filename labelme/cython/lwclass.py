@@ -25,6 +25,26 @@ class lwclass:
         self.cPointx_list = []
         self.cPointy_list = []
 
+    def initiate(self, path):
+        self.img = cv2.imread(path, 1)
+        self.imgF = self.calcLiveWireCostFcn(cv2.cvtColor(self.img, cv2.COLOR_RGB2GRAY))
+        self.imgF = self.imgF.astype(np.double)
+        if self.imgF.shape[0] > self.imgF.shape[1]:
+            self.imgFR = cv2.rotate(self.imgF, cv2.ROTATE_90_CLOCKWISE)
+        self.cPoint = np.array([0, 0], dtype=np.int32)
+        self.mPoint = np.array([0, 0], dtype=np.int32)
+        self.iPX = np.zeros(self.imgF.shape, np.int32)
+        self.iPY = np.zeros(self.imgF.shape, np.int32)
+        self.pathx_arr = np.zeros(10000, np.int32)
+        self.pathy_arr = np.zeros(10000, np.int32)
+        self.isPath = False
+        self.path_allx = np.array([], dtype=np.int32)
+        self.path_ally = np.array([], dtype=np.int32)
+        self.num_point = 0
+        self.num_list = []
+        self.cPointx_list = []
+        self.cPointy_list = []
+
     def calcImgGrad(self, img):
         x = cv2.Sobel(img, cv2.CV_32F, 1, 0)
         y = cv2.Sobel(img, cv2.CV_32F, 0, 1)
