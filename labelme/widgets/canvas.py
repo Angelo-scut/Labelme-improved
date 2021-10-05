@@ -883,7 +883,8 @@ class Canvas(QtWidgets.QWidget):
         assert text
         self.shapes[-1].label = text
         self.shapes[-1].flags = flags
-        self.shapesBackups.pop()
+        if self.createMode != "livewire":
+            self.shapesBackups.pop()
         self.storeShapes()
         return self.shapes[-1]
 
