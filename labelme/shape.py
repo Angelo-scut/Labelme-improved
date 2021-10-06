@@ -41,7 +41,6 @@ class Shape(object):
 
     def __init__(
         self,
-        path=None,
         label=None,
         line_color=None,
         shape_type=None,

@@ -120,9 +120,15 @@ class Canvas(QtWidgets.QWidget):
         shapesBackup = []
         for shape in self.shapes:
             shapesBackup.append(shape.copy())
-        if len(self.shapesBackups) >= 10:
-            self.shapesBackups = self.shapesBackups[-9:]
+        # if len(self.shapesBackups) >= 10:
+        #     self.shapesBackups = self.shapesBackups[-9:]
         self.shapesBackups.append(shapesBackup)
+        if self.createMode == "livewire":  # 需要修改的地方，如果label比较多，则需要增加backup个数
+            if len(self.shapesBackups) >= 3:
+                self.shapesBackups = self.shapesBackups[-3:]
+        else:
+            if len(self.shapesBackups) >= 10:
+                self.shapesBackups = self.shapesBackups[-9:]
     #加入了property装饰符之后，调用时以属性（对应C++的成员）的形式调用，而不是方法（对应C++的函数）的形式
     @property
     def isShapeRestorable(self):
@@ -435,7 +441,7 @@ class Canvas(QtWidgets.QWidget):
                 elif not self.outOfPixmap(pos):  # 如果还没点第一个点，那么将这个点加入current并且绘制这个点
                     # Create new shape.
                     if self.createMode == "livewire":
-                        self.current = Shape(path=self.filename, shape_type=self.createMode)
+                        self.current = Shape(shape_type=self.createMode)
                         if self.lw is None:
                             self.lw = lwclass(self.filename)
                         else:
@@ -762,8 +768,8 @@ class Canvas(QtWidgets.QWidget):
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
-        if self.createMode != "livewire":
-            self.storeShapes()  # 这里消耗了大量的内存
+        # if self.createMode != "livewire":
+        self.storeShapes()  # 这里消耗了大量的内存
         self.current = None
         self.setHiding(False)
         self.newShape.emit()
@@ -883,8 +889,8 @@ class Canvas(QtWidgets.QWidget):
         assert text
         self.shapes[-1].label = text
         self.shapes[-1].flags = flags
-        if self.createMode != "livewire":
-            self.shapesBackups.pop()
+        # if self.createMode != "livewire":
+        self.shapesBackups.pop()
         self.storeShapes()
         return self.shapes[-1]
 
