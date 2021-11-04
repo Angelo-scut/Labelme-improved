@@ -127,6 +127,7 @@ def lwlabel(file_path, out_path):
     color_list = [[0, 0, 255],
                   [0, 255, 0],
                   [255, 0, 0]]
+    a, b = 150, 650
     for i in range(0, len(file_list)):
         path = os.path.join(file_path, file_list[i])  # 获取每个json文件的绝对路径
         filename = file_list[i][:-5]  # 提取出.json前的字符作为文件名，以便后续保存Label图片的时候使用
@@ -136,9 +137,11 @@ def lwlabel(file_path, out_path):
                 data = json.load(open(path))
                 img = utils.image.img_b64_to_arr(data['imageData'])  # 根据'imageData'字段的字符可以得到原图像
                 lbl, lbl_names = utils.shape.labelme_shapes_to_label(img.shape, data['shapes'], isClose=True)
-                cv2.imwrite(osp.join(out_path, '{}_mask.png'.format(filename)), lbl.astype(np.uint8))
-                cv2.imwrite(osp.join(out_path, '{}.png'.format(filename)), img.astype(np.uint8))
-                # PIL.Image.fromarray(lbl).save(osp.join(out_path, '{}_mask.png'.format(filename)))
+                img = img[a:, (b-400):(b+400)]
+                lbl = lbl[a:, (b-400):(b+400)]
+                cv2.imwrite(osp.join(out_path, 'Label', '{}.png'.format(filename)), lbl.astype(np.uint8))
+                cv2.imwrite(osp.join(out_path, 'Image', '{}.png'.format(filename)), img.astype(np.uint8))
+                # PIL.Image.fromarray(lbl).save(osp.join(out_path, '{}_mask.png'.format(filename)), format='PNG')
                 # PIL.Image.fromarray(img).save(osp.join(out_path, '{}.png'.format(filename)))
                 img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
                 for j in range(1, lbl.max()+1):
@@ -149,6 +152,7 @@ def lwlabel(file_path, out_path):
                     color_mask = np.array(color_list[j-1], dtype=np.uint8)
                     img[temp] = img[temp] * 0.8 + color_mask * 0.2
                 cv2.imwrite(osp.join(out_visual, '{}_visual.png'.format(filename)), img.astype(np.uint8))
+                cv2.waitKey(5)
                 # PIL.Image.fromarray(img).save(osp.join(out_visual, '{}_visual.png'.format(filename)))
 
 
@@ -157,7 +161,7 @@ if __name__ == '__main__':
     # print('Finished!')
     # checkmsak()
     file_path = "E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\train"
-    save_path = "E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\label"
+    save_path = "E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\label\\train"
     lwlabel(file_path, save_path)
     # img = cv2.imread("E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\test\\test\\35_mask.png", 0)
     # img = img * 100
