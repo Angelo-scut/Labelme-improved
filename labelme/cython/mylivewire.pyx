@@ -35,7 +35,7 @@ def button_even(imgF, cPoint):
     cdef int[::1] lE_memivew = lE
     cdef double dRadius = 120
     cdef int max_lenght = 10000
-    calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+    # calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
     calcLiveWireP(&img_memview[0], imgF.shape[0], imgF.shape[1], &cPoint_memivew[0], &iPX_memivew[0],
                   &iPY_memivew[0],&lE_memivew[0], dRadius, max_lenght)
     return cPoint, iPX, iPY
@@ -64,7 +64,7 @@ def move_event(imgF, cPoint, mPoint, iPX, iPY, pathx, pathy):
     cdef double dRadius = 120
     cdef int max_lenght = 10000
     cdef int num_point = 0
-    calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+    # calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
     num_point = calcLWPath(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1], &iPX_memivew[0],
                            &iPY_memivew[0],&pathx_memivew[0], &pathy_memivew[0], &cPoint_memivew[0])
 

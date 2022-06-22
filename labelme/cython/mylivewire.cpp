@@ -2220,9 +2220,9 @@ static PyObject *__pyx_pf_10mylivewire_button_even(CYTHON_UNUSED PyObject *__pyx
   int __pyx_t_10;
   PyObject *__pyx_t_11 = NULL;
   Py_ssize_t __pyx_t_12;
-  Py_ssize_t __pyx_t_13;
+  unsigned int __pyx_t_13;
   unsigned int __pyx_t_14;
-  unsigned int __pyx_t_15;
+  Py_ssize_t __pyx_t_15;
   Py_ssize_t __pyx_t_16;
   Py_ssize_t __pyx_t_17;
   Py_ssize_t __pyx_t_18;
@@ -2811,7 +2811,7 @@ static PyObject *__pyx_pf_10mylivewire_button_even(CYTHON_UNUSED PyObject *__pyx
  *     cdef int[::1] lE_memivew = lE
  *     cdef double dRadius = 120             # <<<<<<<<<<<<<<
  *     cdef int max_lenght = 10000
- *     calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  */
   __pyx_v_dRadius = 120.0;
 
@@ -2819,67 +2819,24 @@ static PyObject *__pyx_pf_10mylivewire_button_even(CYTHON_UNUSED PyObject *__pyx
  *     cdef int[::1] lE_memivew = lE
  *     cdef double dRadius = 120
  *     cdef int max_lenght = 10000             # <<<<<<<<<<<<<<
- *     calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  *     calcLiveWireP(&img_memview[0], imgF.shape[0], imgF.shape[1], &cPoint_memivew[0], &iPX_memivew[0],
  */
   __pyx_v_max_lenght = 0x2710;
 
-  /* "mylivewire.pyx":38
- *     cdef double dRadius = 120
- *     cdef int max_lenght = 10000
- *     calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])             # <<<<<<<<<<<<<<
- *     calcLiveWireP(&img_memview[0], imgF.shape[0], imgF.shape[1], &cPoint_memivew[0], &iPX_memivew[0],
- *                   &iPY_memivew[0],&lE_memivew[0], dRadius, max_lenght)
- */
-  __pyx_t_12 = 0;
-  __pyx_t_10 = -1;
-  if (__pyx_t_12 < 0) {
-    __pyx_t_12 += __pyx_v_cPoint_memivew.shape[0];
-    if (unlikely(__pyx_t_12 < 0)) __pyx_t_10 = 0;
-  } else if (unlikely(__pyx_t_12 >= __pyx_v_cPoint_memivew.shape[0])) __pyx_t_10 = 0;
-  if (unlikely(__pyx_t_10 != -1)) {
-    __Pyx_RaiseBufferIndexError(__pyx_t_10);
-    __PYX_ERR(0, 38, __pyx_L1_error)
-  }
-  __pyx_t_13 = 0;
-  __pyx_t_10 = -1;
-  if (__pyx_t_13 < 0) {
-    __pyx_t_13 += __pyx_v_img_memview.shape[0];
-    if (unlikely(__pyx_t_13 < 0)) __pyx_t_10 = 0;
-  } else if (unlikely(__pyx_t_13 >= __pyx_v_img_memview.shape[0])) __pyx_t_10 = 0;
-  if (unlikely(__pyx_t_10 != -1)) {
-    __Pyx_RaiseBufferIndexError(__pyx_t_10);
-    __PYX_ERR(0, 38, __pyx_L1_error)
-  }
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_imgF, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_2, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_14 = __Pyx_PyInt_As_unsigned_int(__pyx_t_4); if (unlikely((__pyx_t_14 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_imgF, __pyx_n_s_shape); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_4, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_15 = __Pyx_PyInt_As_unsigned_int(__pyx_t_2); if (unlikely((__pyx_t_15 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  calcLWP((&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_cPoint_memivew.data) + __pyx_t_12)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_img_memview.data) + __pyx_t_13)) )))), __pyx_t_14, __pyx_t_15);
-
   /* "mylivewire.pyx":39
  *     cdef int max_lenght = 10000
- *     calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  *     calcLiveWireP(&img_memview[0], imgF.shape[0], imgF.shape[1], &cPoint_memivew[0], &iPX_memivew[0],             # <<<<<<<<<<<<<<
  *                   &iPY_memivew[0],&lE_memivew[0], dRadius, max_lenght)
  *     return cPoint, iPX, iPY
  */
-  __pyx_t_13 = 0;
+  __pyx_t_12 = 0;
   __pyx_t_10 = -1;
-  if (__pyx_t_13 < 0) {
-    __pyx_t_13 += __pyx_v_img_memview.shape[0];
-    if (unlikely(__pyx_t_13 < 0)) __pyx_t_10 = 0;
-  } else if (unlikely(__pyx_t_13 >= __pyx_v_img_memview.shape[0])) __pyx_t_10 = 0;
+  if (__pyx_t_12 < 0) {
+    __pyx_t_12 += __pyx_v_img_memview.shape[0];
+    if (unlikely(__pyx_t_12 < 0)) __pyx_t_10 = 0;
+  } else if (unlikely(__pyx_t_12 >= __pyx_v_img_memview.shape[0])) __pyx_t_10 = 0;
   if (unlikely(__pyx_t_10 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_10);
     __PYX_ERR(0, 39, __pyx_L1_error)
@@ -2889,7 +2846,7 @@ static PyObject *__pyx_pf_10mylivewire_button_even(CYTHON_UNUSED PyObject *__pyx
   __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_2, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_15 = __Pyx_PyInt_As_unsigned_int(__pyx_t_4); if (unlikely((__pyx_t_15 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_t_13 = __Pyx_PyInt_As_unsigned_int(__pyx_t_4); if (unlikely((__pyx_t_13 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_imgF, __pyx_n_s_shape); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -2898,12 +2855,12 @@ static PyObject *__pyx_pf_10mylivewire_button_even(CYTHON_UNUSED PyObject *__pyx
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_14 = __Pyx_PyInt_As_unsigned_int(__pyx_t_2); if (unlikely((__pyx_t_14 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_12 = 0;
+  __pyx_t_15 = 0;
   __pyx_t_10 = -1;
-  if (__pyx_t_12 < 0) {
-    __pyx_t_12 += __pyx_v_cPoint_memivew.shape[0];
-    if (unlikely(__pyx_t_12 < 0)) __pyx_t_10 = 0;
-  } else if (unlikely(__pyx_t_12 >= __pyx_v_cPoint_memivew.shape[0])) __pyx_t_10 = 0;
+  if (__pyx_t_15 < 0) {
+    __pyx_t_15 += __pyx_v_cPoint_memivew.shape[0];
+    if (unlikely(__pyx_t_15 < 0)) __pyx_t_10 = 0;
+  } else if (unlikely(__pyx_t_15 >= __pyx_v_cPoint_memivew.shape[0])) __pyx_t_10 = 0;
   if (unlikely(__pyx_t_10 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_10);
     __PYX_ERR(0, 39, __pyx_L1_error)
@@ -2920,7 +2877,7 @@ static PyObject *__pyx_pf_10mylivewire_button_even(CYTHON_UNUSED PyObject *__pyx
   }
 
   /* "mylivewire.pyx":40
- *     calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  *     calcLiveWireP(&img_memview[0], imgF.shape[0], imgF.shape[1], &cPoint_memivew[0], &iPX_memivew[0],
  *                   &iPY_memivew[0],&lE_memivew[0], dRadius, max_lenght)             # <<<<<<<<<<<<<<
  *     return cPoint, iPX, iPY
@@ -2949,12 +2906,12 @@ static PyObject *__pyx_pf_10mylivewire_button_even(CYTHON_UNUSED PyObject *__pyx
 
   /* "mylivewire.pyx":39
  *     cdef int max_lenght = 10000
- *     calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&cPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  *     calcLiveWireP(&img_memview[0], imgF.shape[0], imgF.shape[1], &cPoint_memivew[0], &iPX_memivew[0],             # <<<<<<<<<<<<<<
  *                   &iPY_memivew[0],&lE_memivew[0], dRadius, max_lenght)
  *     return cPoint, iPX, iPY
  */
-  calcLiveWireP((&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_img_memview.data) + __pyx_t_13)) )))), __pyx_t_15, __pyx_t_14, (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_cPoint_memivew.data) + __pyx_t_12)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPX_memivew.data) + __pyx_t_16)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPY_memivew.data) + __pyx_t_17)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_lE_memivew.data) + __pyx_t_18)) )))), __pyx_v_dRadius, __pyx_v_max_lenght);
+  calcLiveWireP((&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_img_memview.data) + __pyx_t_12)) )))), __pyx_t_13, __pyx_t_14, (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_cPoint_memivew.data) + __pyx_t_15)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPX_memivew.data) + __pyx_t_16)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPY_memivew.data) + __pyx_t_17)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_lE_memivew.data) + __pyx_t_18)) )))), __pyx_v_dRadius, __pyx_v_max_lenght);
 
   /* "mylivewire.pyx":41
  *     calcLiveWireP(&img_memview[0], imgF.shape[0], imgF.shape[1], &cPoint_memivew[0], &iPX_memivew[0],
@@ -3738,7 +3695,7 @@ static PyObject *__pyx_pf_10mylivewire_2move_event(CYTHON_UNUSED PyObject *__pyx
  *     cdef double dRadius = 120
  *     cdef int max_lenght = 10000             # <<<<<<<<<<<<<<
  *     cdef int num_point = 0
- *     calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  */
   __pyx_v_max_lenght = 0x2710;
 
@@ -3746,17 +3703,17 @@ static PyObject *__pyx_pf_10mylivewire_2move_event(CYTHON_UNUSED PyObject *__pyx
  *     cdef double dRadius = 120
  *     cdef int max_lenght = 10000
  *     cdef int num_point = 0             # <<<<<<<<<<<<<<
- *     calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  *     num_point = calcLWPath(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1], &iPX_memivew[0],
  */
   __pyx_v_num_point = 0;
 
-  /* "mylivewire.pyx":67
- *     cdef int max_lenght = 10000
+  /* "mylivewire.pyx":68
  *     cdef int num_point = 0
- *     calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])             # <<<<<<<<<<<<<<
- *     num_point = calcLWPath(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1], &iPX_memivew[0],
+ *     # calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     num_point = calcLWPath(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1], &iPX_memivew[0],             # <<<<<<<<<<<<<<
  *                            &iPY_memivew[0],&pathx_memivew[0], &pathy_memivew[0], &cPoint_memivew[0])
+ * 
  */
   __pyx_t_11 = 0;
   __pyx_t_8 = -1;
@@ -3766,7 +3723,7 @@ static PyObject *__pyx_pf_10mylivewire_2move_event(CYTHON_UNUSED PyObject *__pyx
   } else if (unlikely(__pyx_t_11 >= __pyx_v_mPoint_memivew.shape[0])) __pyx_t_8 = 0;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 67, __pyx_L1_error)
+    __PYX_ERR(0, 68, __pyx_L1_error)
   }
   __pyx_t_12 = 0;
   __pyx_t_8 = -1;
@@ -3776,49 +3733,6 @@ static PyObject *__pyx_pf_10mylivewire_2move_event(CYTHON_UNUSED PyObject *__pyx
   } else if (unlikely(__pyx_t_12 >= __pyx_v_img_memview.shape[0])) __pyx_t_8 = 0;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 67, __pyx_L1_error)
-  }
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_imgF, __pyx_n_s_shape); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_4, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_13 = __Pyx_PyInt_As_unsigned_int(__pyx_t_3); if (unlikely((__pyx_t_13 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_imgF, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_3, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_14 = __Pyx_PyInt_As_unsigned_int(__pyx_t_4); if (unlikely((__pyx_t_14 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 67, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  calcLWP((&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_mPoint_memivew.data) + __pyx_t_11)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_img_memview.data) + __pyx_t_12)) )))), __pyx_t_13, __pyx_t_14);
-
-  /* "mylivewire.pyx":68
- *     cdef int num_point = 0
- *     calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
- *     num_point = calcLWPath(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1], &iPX_memivew[0],             # <<<<<<<<<<<<<<
- *                            &iPY_memivew[0],&pathx_memivew[0], &pathy_memivew[0], &cPoint_memivew[0])
- * 
- */
-  __pyx_t_12 = 0;
-  __pyx_t_8 = -1;
-  if (__pyx_t_12 < 0) {
-    __pyx_t_12 += __pyx_v_mPoint_memivew.shape[0];
-    if (unlikely(__pyx_t_12 < 0)) __pyx_t_8 = 0;
-  } else if (unlikely(__pyx_t_12 >= __pyx_v_mPoint_memivew.shape[0])) __pyx_t_8 = 0;
-  if (unlikely(__pyx_t_8 != -1)) {
-    __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 68, __pyx_L1_error)
-  }
-  __pyx_t_11 = 0;
-  __pyx_t_8 = -1;
-  if (__pyx_t_11 < 0) {
-    __pyx_t_11 += __pyx_v_img_memview.shape[0];
-    if (unlikely(__pyx_t_11 < 0)) __pyx_t_8 = 0;
-  } else if (unlikely(__pyx_t_11 >= __pyx_v_img_memview.shape[0])) __pyx_t_8 = 0;
-  if (unlikely(__pyx_t_8 != -1)) {
-    __Pyx_RaiseBufferIndexError(__pyx_t_8);
     __PYX_ERR(0, 68, __pyx_L1_error)
   }
   __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_imgF, __pyx_n_s_shape); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 68, __pyx_L1_error)
@@ -3826,14 +3740,14 @@ static PyObject *__pyx_pf_10mylivewire_2move_event(CYTHON_UNUSED PyObject *__pyx
   __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_4, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_14 = __Pyx_PyInt_As_unsigned_int(__pyx_t_3); if (unlikely((__pyx_t_14 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_t_13 = __Pyx_PyInt_As_unsigned_int(__pyx_t_3); if (unlikely((__pyx_t_13 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_imgF, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_3, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_13 = __Pyx_PyInt_As_unsigned_int(__pyx_t_4); if (unlikely((__pyx_t_13 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_t_14 = __Pyx_PyInt_As_unsigned_int(__pyx_t_4); if (unlikely((__pyx_t_14 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_15 = 0;
   __pyx_t_8 = -1;
@@ -3847,7 +3761,7 @@ static PyObject *__pyx_pf_10mylivewire_2move_event(CYTHON_UNUSED PyObject *__pyx
   }
 
   /* "mylivewire.pyx":69
- *     calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  *     num_point = calcLWPath(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1], &iPX_memivew[0],
  *                            &iPY_memivew[0],&pathx_memivew[0], &pathy_memivew[0], &cPoint_memivew[0])             # <<<<<<<<<<<<<<
  * 
@@ -3896,12 +3810,12 @@ static PyObject *__pyx_pf_10mylivewire_2move_event(CYTHON_UNUSED PyObject *__pyx
 
   /* "mylivewire.pyx":68
  *     cdef int num_point = 0
- *     calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
+ *     # calcLWP(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1])
  *     num_point = calcLWPath(&mPoint_memivew[0], &img_memview[0], imgF.shape[0], imgF.shape[1], &iPX_memivew[0],             # <<<<<<<<<<<<<<
  *                            &iPY_memivew[0],&pathx_memivew[0], &pathy_memivew[0], &cPoint_memivew[0])
  * 
  */
-  __pyx_v_num_point = calcLWPath((&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_mPoint_memivew.data) + __pyx_t_12)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_img_memview.data) + __pyx_t_11)) )))), __pyx_t_14, __pyx_t_13, (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPX_memivew.data) + __pyx_t_15)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPY_memivew.data) + __pyx_t_16)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_pathx_memivew.data) + __pyx_t_17)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_pathy_memivew.data) + __pyx_t_18)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_cPoint_memivew.data) + __pyx_t_19)) )))));
+  __pyx_v_num_point = calcLWPath((&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_mPoint_memivew.data) + __pyx_t_11)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_img_memview.data) + __pyx_t_12)) )))), __pyx_t_13, __pyx_t_14, (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPX_memivew.data) + __pyx_t_15)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_iPY_memivew.data) + __pyx_t_16)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_pathx_memivew.data) + __pyx_t_17)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_pathy_memivew.data) + __pyx_t_18)) )))), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_cPoint_memivew.data) + __pyx_t_19)) )))));
 
   /* "mylivewire.pyx":71
  *                            &iPY_memivew[0],&pathx_memivew[0], &pathy_memivew[0], &cPoint_memivew[0])

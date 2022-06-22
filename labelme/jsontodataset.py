@@ -11,7 +11,7 @@ from PIL import Image
 import yaml
 import cv2
 from labelme import utils
-
+import random
 
 def ellipse_type(json_file, list, out, img_size):
     for i in range(0, len(list)):
@@ -119,31 +119,50 @@ def checkmsak():
 
 def lwlabel(file_path, out_path):
     file_list = os.listdir(file_path)
-    if not osp.exists(out_path):
-        os.mkdir(out_path)
-    out_visual = os.path.join(out_path, "visual")
-    if not osp.exists(out_visual):
-        os.mkdir(out_visual)
-    color_list = [[0, 0, 255],
+    parent_path = ["train", "val"]
+    child_path = ["Image", "Label", "visual"]
+    for parent in parent_path:
+        temp_path = os.path.join(out_path, parent)
+        if not osp.exists(temp_path):
+            os.mkdir(temp_path)
+        for child in child_path:
+            temp_path = os.path.join(out_path, parent, child)
+            if not osp.exists(temp_path):
+                os.mkdir(temp_path)
+    train_file_path = os.path.join(out_path, "train")
+    val_file_path = os.path.join(out_path, "val")
+    color_list = [[0, 255, 255],
                   [0, 255, 0],
-                  [255, 0, 0]]
+                  [255, 0, 0],
+                  [255, 255, 0]]
     a, b = 150, 650
+    # from sklearn.model_selection import train_test_split
+    # train, test = train_test_split(file_list, test_size=0.2, random_state=42)
+    # file_list = test
+    # file_list = ["Q226.json"]
     for i in range(0, len(file_list)):
         path = os.path.join(file_path, file_list[i])  # 获取每个json文件的绝对路径
         filename = file_list[i][:-5]  # 提取出.json前的字符作为文件名，以便后续保存Label图片的时候使用
         extension = file_list[i][-4:]
         if extension == 'json':
             if os.path.isfile(path):
+                random_num = random.randint(0, 100)
                 data = json.load(open(path))
-                img = utils.image.img_b64_to_arr(data['imageData'])  # 根据'imageData'字段的字符可以得到原图像
-                lbl, lbl_names = utils.shape.labelme_shapes_to_label(img.shape, data['shapes'], isClose=True)
-                img = img[a:, (b-400):(b+400)]
-                lbl = lbl[a:, (b-400):(b+400)]
-                cv2.imwrite(osp.join(out_path, 'Label', '{}.png'.format(filename)), lbl.astype(np.uint8))
-                cv2.imwrite(osp.join(out_path, 'Image', '{}.png'.format(filename)), img.astype(np.uint8))
+                img = cv2.imread(os.path.join(file_path, filename) + '.png', 1)
+                # img = utils.image.img_b64_to_arr(data['imageData'])  # 根据'imageData'字段的字符可以得到原图像
+                # remember to change the "label_name_to_value"
+                lbl, lbl_names = utils.shape.labelme_shapes_to_label(img.shape, data['shapes'], line_width=1, isClose=True)
+                # img = img[a:, (b-400):(b+400)]
+                # lbl = lbl[a:, (b-400):(b+400)]
+                if random_num < 80:
+                    cv2.imwrite(osp.join(train_file_path, 'Label', '{}.png'.format(filename)), lbl.astype(np.uint8))
+                    cv2.imwrite(osp.join(train_file_path, 'Image', '{}.png'.format(filename)), img.astype(np.uint8))
+                else:
+                    cv2.imwrite(osp.join(val_file_path, 'Label', '{}.png'.format(filename)), lbl.astype(np.uint8))
+                    cv2.imwrite(osp.join(val_file_path, 'Image', '{}.png'.format(filename)), img.astype(np.uint8))
                 # PIL.Image.fromarray(lbl).save(osp.join(out_path, '{}_mask.png'.format(filename)), format='PNG')
                 # PIL.Image.fromarray(img).save(osp.join(out_path, '{}.png'.format(filename)))
-                img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+                # img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
                 for j in range(1, lbl.max()+1):
                     temp = lbl.copy()
                     temp[temp != j] = 0
@@ -151,7 +170,12 @@ def lwlabel(file_path, out_path):
                     temp = temp.astype(np.bool8)
                     color_mask = np.array(color_list[j-1], dtype=np.uint8)
                     img[temp] = img[temp] * 0.8 + color_mask * 0.2
-                cv2.imwrite(osp.join(out_visual, '{}_visual.png'.format(filename)), img.astype(np.uint8))
+                if random_num < 80:
+                    cv2.imwrite(osp.join(train_file_path, 'visual', '{}_visual.png'.format(filename)),
+                                img.astype(np.uint8))
+                else:
+                    cv2.imwrite(osp.join(val_file_path, 'visual', '{}_visual.png'.format(filename)),
+                                img.astype(np.uint8))
                 cv2.waitKey(5)
                 # PIL.Image.fromarray(img).save(osp.join(out_visual, '{}_visual.png'.format(filename)))
 
@@ -160,8 +184,8 @@ if __name__ == '__main__':
     # main()
     # print('Finished!')
     # checkmsak()
-    file_path = "E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\train"
-    save_path = "E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\label\\train"
+    file_path = "E:/OneDrive/My_paper/Program/weldingUI/data/Img"
+    save_path = "E:/OneDrive/My_paper/Program/weldingUI/data/Data_With_Label"
     lwlabel(file_path, save_path)
     # img = cv2.imread("E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\test\\test\\35_mask.png", 0)
     # img = img * 100
