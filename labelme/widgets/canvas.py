@@ -230,7 +230,7 @@ class Canvas(QtWidgets.QWidget):
             ):
                 # Attract line to starting point and
                 # colorise to alert the user.
-                # 如果处在polygon模式，且该店与开始的点足够接近的话，那么此时在点下鼠标左键即可闭合
+                # 如果处在livewire模式，且该点与开始的点足够接近的话，那么此时在点下鼠标左键即可闭合
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
@@ -386,6 +386,8 @@ class Canvas(QtWidgets.QWidget):
             pos = self.transformPos(ev.posF())
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
+                if self.outOfPixmap(pos):
+                    return  # 如果在点击的时候已经超了图片范围，则直接返回就行
                 if self.current:  # 如果已经点过一个点了
                     # Add point to existing shape.
                     if self.createMode == "polygon":
@@ -884,6 +886,8 @@ class Canvas(QtWidgets.QWidget):
             self.update()
         elif key == QtCore.Qt.Key_Return and self.canCloseShape():
             self.finalise()
+        elif key == QtCore.Qt.Key_Q and self.createMode == "livewire" and self.lw is not None:
+            self.lw.islw = not self.lw.islw
 
     def setLastLabel(self, text, flags):
         assert text

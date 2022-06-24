@@ -1,5 +1,5 @@
 # Labelme-improved
-[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT) 
 
 This repo is improved from labelme with python-qt version:
 https://github.com/wkentaro/labelme
@@ -23,6 +23,9 @@ short and long axes, respectively, and the inclination is arctan(OA/OB)
 
 ### Magnetic Annotation Tool
 Two modes: polygonal and piecewise curve.
+
+06.24 update:Added the function of temporarily canceling the magnetic index by pressing the Q key, and pressing Q again 
+can restore it
 #### Polygonal Mode
 -The last click point can be enclosed in a polygon with the first click point. The right mouse button can undo a section 
 of the annotation.

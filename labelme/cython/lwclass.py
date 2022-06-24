@@ -24,6 +24,7 @@ class lwclass:
         self.num_list = []
         self.cPointx_list = []
         self.cPointy_list = []
+        self.islw = True
 
     def initiate(self, path):
         self.img = cv2.imread(path, 1)
@@ -46,8 +47,9 @@ class lwclass:
         self.cPointy_list = []
 
     def calcImgGrad(self, img):
-        x = cv2.Sobel(img, cv2.CV_32F, 1, 0)
-        y = cv2.Sobel(img, cv2.CV_32F, 0, 1)
+        imgG = cv2.GaussianBlur(img, (3, 3), 5.0)
+        x = cv2.Sobel(imgG, cv2.CV_32F, 1, 0)
+        y = cv2.Sobel(imgG, cv2.CV_32F, 0, 1)
         mag, _ = cv2.cartToPolar(x, y)
         _, max_val, _, _ = cv2.minMaxLoc(mag)
         return 1.0 - mag / max_val
@@ -77,20 +79,30 @@ class lwclass:
             temp = self.mPoint[1]
             self.mPoint[1] = self.mPoint[0]
             self.mPoint[0] = self.imgF.shape[0] - temp
-            self.num_point, self.mPoint, self.pathx_arr, self.pathy_arr = move_event(self.imgFR, self.cPoint,
-                                                                                     self.mPoint,
-                                                                                     self.iPX, self.iPY, self.pathx_arr,
-                                                                                     self.pathy_arr)
-            self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), self.pathx_arr[:self.num_point]), axis=0)
-            self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), self.pathy_arr[:self.num_point]), axis=0)
+            if self.islw:
+                self.num_point, self.mPoint, self.pathx_arr, self.pathy_arr = move_event(self.imgFR, self.cPoint,
+                                                                                         self.mPoint,
+                                                                                         self.iPX, self.iPY, self.pathx_arr,
+                                                                                         self.pathy_arr)
+                self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), self.pathx_arr[:self.num_point]), axis=0)
+                self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), self.pathy_arr[:self.num_point]), axis=0)
+            else:
+                self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), np.array([self.mPoint[0]])), axis=0)
+                self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), np.array([self.mPoint[1]])), axis=0)
+                self.num_point = 1
             self.num_point += 1
         else:
-            self.num_point, self.mPoint, self.pathx_arr, self.pathy_arr = move_event(self.imgF, self.cPoint,
-                                                                                     self.mPoint,
-                                                                                     self.iPX, self.iPY, self.pathx_arr,
-                                                                                     self.pathy_arr)
-            self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), self.pathx_arr[:self.num_point]), axis=0)
-            self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), self.pathy_arr[:self.num_point]), axis=0)
+            if self.islw:
+                self.num_point, self.mPoint, self.pathx_arr, self.pathy_arr = move_event(self.imgF, self.cPoint,
+                                                                                         self.mPoint,
+                                                                                         self.iPX, self.iPY, self.pathx_arr,
+                                                                                         self.pathy_arr)
+                self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), self.pathx_arr[:self.num_point]), axis=0)
+                self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), self.pathy_arr[:self.num_point]), axis=0)
+            else:
+                self.pathx_arr = np.concatenate((np.array([self.cPoint[0]]), np.array([self.mPoint[0]])), axis=0)
+                self.pathy_arr = np.concatenate((np.array([self.cPoint[1]]), np.array([self.mPoint[1]])), axis=0)
+                self.num_point = 1
             self.num_point += 1
 
     def button(self):
