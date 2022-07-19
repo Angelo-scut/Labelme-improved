@@ -18,7 +18,7 @@ pip install --user -r requirements.txt
 - Added magnetic annotation tool (Just like PhotoShop)
 
 ### Ellipse Anotation Tool 
--The first point is the center of the ellipse, the distances from the second and third points to the center are the 
+- The first point is the center of the ellipse, the distances from the second and third points to the center are the 
 short and long axes, respectively, and the inclination is arctan(OA/OB)
 
 ### Magnetic Annotation Tool
@@ -27,8 +27,8 @@ Two modes: polygonal and piecewise curve.
 06.24 update:Added the function of temporarily canceling the magnetic index by pressing the Q key, and pressing Q again 
 can restore it
 #### Polygonal Mode
--The last click point can be enclosed in a polygon with the first click point. The right mouse button can undo a section 
+- The last click point can be enclosed in a polygon with the first click point. The right mouse button can undo a section 
 of the annotation.
 #### Piecewise Curve mode
--Double-click anywhere to complete the annotation.The right mouse button can undo a section of the annotation.
+- Double-click anywhere to complete the annotation.The right mouse button can undo a section of the annotation.
 
