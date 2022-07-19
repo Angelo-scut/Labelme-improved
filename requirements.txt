@@ -1,7 +1,7 @@
 imgviz~=1.2.6
 matplotlib~=3.2.2
 labelme~=4.5.7
-numpy~=1.20.2
+numpy>=1.20.2
 Pillow>=9.0.1
 qtpy~=1.9.0
 opencv-python~=4.5.2.54
