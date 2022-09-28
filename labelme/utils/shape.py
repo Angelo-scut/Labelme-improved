@@ -127,7 +127,7 @@ def labelme_shapes_to_label(img_shape, shapes, line_width=10, point_size=5, isCl
     #     "shapes_to_label."
     # )
 
-    label_name_to_value = {"_background_": 0, "weldpool": 1, "keyhole": 2, "seam": 3}
+    label_name_to_value = {"_background_": 0, "weldpool": 3, "keyhole": 1, "seam": 2}
     for shape in shapes:
         label_name = shape["label"]
         if label_name in label_name_to_value:

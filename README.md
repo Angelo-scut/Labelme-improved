@@ -12,6 +12,16 @@ or for a local installation
 ```bash
 pip install --user -r requirements.txt
 ```
+or install labelme and cython by
+```bash
+pip install labelme
+pip install cython
+```
+
+## How To Use
+```
+ Run __main__.py in PyCharm
+```
 
 ## Main Features
 - Added an ellipse annotation tool that can be tilted at any angle
@@ -32,3 +42,15 @@ of the annotation.
 #### Piecewise Curve mode
 - Double-click anywhere to complete the annotation.The right mouse button can undo a section of the annotation.
 
+## Json2Dataset
+You need to modify the 'label_name_to_value' in shape.py and the path in jsontodataset.py
+```
+Run jsontodataset.py
+```
+
+## Citation
+If you find our repo useful for your research, please consider citing our paper:
+
+```
+
+```

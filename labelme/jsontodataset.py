@@ -140,6 +140,8 @@ def lwlabel(file_path, out_path):
     # train, test = train_test_split(file_list, test_size=0.2, random_state=42)
     # file_list = test
     # file_list = ["Q226.json"]
+    train_num, val_num = 0, 0
+    isTest = False
     for i in range(0, len(file_list)):
         path = os.path.join(file_path, file_list[i])  # 获取每个json文件的绝对路径
         filename = file_list[i][:-5]  # 提取出.json前的字符作为文件名，以便后续保存Label图片的时候使用
@@ -148,18 +150,20 @@ def lwlabel(file_path, out_path):
             if os.path.isfile(path):
                 random_num = random.randint(0, 100)
                 data = json.load(open(path))
-                img = cv2.imread(os.path.join(file_path, filename) + '.png', 1)
+                img = cv2.imread(os.path.join(file_path, filename) + '.jpg', 1)
                 # img = utils.image.img_b64_to_arr(data['imageData'])  # 根据'imageData'字段的字符可以得到原图像
                 # remember to change the "label_name_to_value"
                 lbl, lbl_names = utils.shape.labelme_shapes_to_label(img.shape, data['shapes'], line_width=1, isClose=True)
                 # img = img[a:, (b-400):(b+400)]
                 # lbl = lbl[a:, (b-400):(b+400)]
-                if random_num < 80:
-                    cv2.imwrite(osp.join(train_file_path, 'Label', '{}.png'.format(filename)), lbl.astype(np.uint8))
-                    cv2.imwrite(osp.join(train_file_path, 'Image', '{}.png'.format(filename)), img.astype(np.uint8))
+                if random_num < 80 and not isTest:
+                    cv2.imwrite(osp.join(train_file_path, 'Label', '{}.png'.format(str(train_num))), lbl.astype(np.uint8))
+                    cv2.imwrite(osp.join(train_file_path, 'Image', '{}.jpg'.format(str(train_num))), img.astype(np.uint8))
+                    train_num += 1
                 else:
-                    cv2.imwrite(osp.join(val_file_path, 'Label', '{}.png'.format(filename)), lbl.astype(np.uint8))
-                    cv2.imwrite(osp.join(val_file_path, 'Image', '{}.png'.format(filename)), img.astype(np.uint8))
+                    cv2.imwrite(osp.join(val_file_path, 'Label', '{}.png'.format(str(val_num))), lbl.astype(np.uint8))
+                    cv2.imwrite(osp.join(val_file_path, 'Image', '{}.jpg'.format(str(val_num))), img.astype(np.uint8))
+                    val_num += 1
                 # PIL.Image.fromarray(lbl).save(osp.join(out_path, '{}_mask.png'.format(filename)), format='PNG')
                 # PIL.Image.fromarray(img).save(osp.join(out_path, '{}.png'.format(filename)))
                 # img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
@@ -170,22 +174,24 @@ def lwlabel(file_path, out_path):
                     temp = temp.astype(np.bool8)
                     color_mask = np.array(color_list[j-1], dtype=np.uint8)
                     img[temp] = img[temp] * 0.8 + color_mask * 0.2
-                if random_num < 80:
-                    cv2.imwrite(osp.join(train_file_path, 'visual', '{}_visual.png'.format(filename)),
+                if random_num < 80 and not isTest:
+                    cv2.imwrite(osp.join(train_file_path, 'visual', '{}_visual.jpg'.format(str(train_num))),
                                 img.astype(np.uint8))
                 else:
-                    cv2.imwrite(osp.join(val_file_path, 'visual', '{}_visual.png'.format(filename)),
+                    cv2.imwrite(osp.join(val_file_path, 'visual', '{}_visual.jpg'.format(str(val_num))),
                                 img.astype(np.uint8))
                 cv2.waitKey(5)
                 # PIL.Image.fromarray(img).save(osp.join(out_visual, '{}_visual.png'.format(filename)))
+    print(train_num)
+    print(val_num)
 
 
 if __name__ == '__main__':
     # main()
     # print('Finished!')
     # checkmsak()
-    file_path = "E:/OneDrive/My_paper/Program/weldingUI/data/Img"
-    save_path = "E:/OneDrive/My_paper/Program/weldingUI/data/Data_With_Label"
+    file_path = "E:/OneDrive/My_paper/Program/weldingUI/data/0921"
+    save_path = "E:/OneDrive/My_paper/Program/weldingUI/data/0921data"
     lwlabel(file_path, save_path)
     # img = cv2.imread("E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\test\\test\\35_mask.png", 0)
     # img = img * 100
