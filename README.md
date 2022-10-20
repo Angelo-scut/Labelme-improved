@@ -14,7 +14,8 @@ pip install --user -r requirements.txt
 ```
 or install labelme and cython by
 ```bash
-pip install labelme
+pip install labelme==4.5.7
+pip install opencv-python==4.5.2.52
 pip install cython
 ```
 
