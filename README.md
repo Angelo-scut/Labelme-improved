@@ -12,7 +12,7 @@ or for a local installation
 ```bash
 pip install --user -r requirements.txt
 ```
-or install labelme and cython by
+or install labelme and cython by(recommended)
 ```bash
 pip install labelme==4.5.7
 pip install opencv-python==4.5.2.52
