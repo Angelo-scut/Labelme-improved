@@ -48,7 +48,7 @@ of the annotation.
 - Double-click anywhere to complete the annotation.The right mouse button can undo a section of the annotation.
 
 ## Json2Dataset
-You need to modify the 'label_name_to_value' in shape.py and the path in jsontodataset.py
+You can modify the jsontodataset.py for personal dataset style. Otherwise, the dataset style will be same as the orignal labelme.
 ```
 python jsontodataset.py --json_file yourjosnpath --out youroutputpath
 ```
