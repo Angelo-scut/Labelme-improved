@@ -28,7 +28,13 @@ or
 ```
  python yourpath/labelmelocal/__main__.py
 ```
+For those who have no environment, please download the exe file from:
+link：https://pan.baidu.com/s/1RSzxIWLKEdBMIIEK4O7AVQ 
 
+passward：1hl5
+```
+ labelme_local/dict/__main__/__main__.exe
+```
 ## Main Features
 - Added an ellipse annotation tool that can be tilted at any angle
 - Added magnetic annotation tool (Just like PhotoShop)
