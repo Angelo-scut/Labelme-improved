@@ -21,7 +21,11 @@ pip install cython
 
 ## How To Use
 ```
- Run __main__.py in PyCharm
+ Run __main__.py in PyCharm or VS code
+```
+or
+```
+ python yourpath/labelmelocal/__main__.py
 ```
 
 ## Main Features
