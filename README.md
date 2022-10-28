@@ -50,8 +50,9 @@ of the annotation.
 ## Json2Dataset
 You need to modify the 'label_name_to_value' in shape.py and the path in jsontodataset.py
 ```
-Run jsontodataset.py
+python jsontodataset.py --json_file yourjosnpath --out youroutputpath
 ```
+
 
 ## Citation
 If you find our repo useful for your research, please consider citing our paper:

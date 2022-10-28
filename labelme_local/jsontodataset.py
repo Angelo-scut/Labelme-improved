@@ -1,17 +1,26 @@
 import argparse
+import base64
 import json
 import os
 import os.path as osp
-import warnings
-import copy
-import numpy as np
+import sys
+
+def add_path(path):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+this_dir = osp.dirname(__file__)
+lib_path = osp.join(this_dir, '..')
+add_path(lib_path)
+
+import imgviz
 import PIL.Image
-from PIL import Image
-# from skimage import io
-import yaml
+import numpy as np
 import cv2
-from labelme_local import utils
 import random
+
+from labelme_local.logger import logger
+from labelme_local import utils
+
 
 def ellipse_type(json_file, list, out, img_size):
     for i in range(0, len(list)):
@@ -70,133 +79,68 @@ def ellipse_type(json_file, list, out, img_size):
                                 f.write(str(format(ebbx[e], '.4f')) + ' ')
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    # parser.add_argument('json_file')   # 标注文件json所在的文件夹
-    # parser.add_argument('-o', '--out', default=None)
-    # args = parser.parse_args()
-    img_size = 640
-    json_file = "./testimage"  # args.json_file
-    out = "./testimage/"
-    color_mask = np.array([255, 0, 0], dtype=np.uint8)  # 可是化的颜色
-    list = os.listdir(json_file)  # 获取json文件列表
-    # ellipse_type(json_file, list, out, img_size)
-    for i in range(0, len(list)):
-        path = os.path.join(json_file, list[i])  # 获取每个json文件的绝对路径
-        filename = list[i][:-5]  # 提取出.json前的字符作为文件名，以便后续保存Label图片的时候使用
-        extension = list[i][-4:]
-        if extension == 'json':
-            if os.path.isfile(path):
-                data = json.load(open(path))
-                img = utils.image.img_b64_to_arr(data['imageData'])  # 根据'imageData'字段的字符可以得到原图像
-                # lbl为label图片（标注的地方用类别名对应的数字来标，其他为0）lbl_names为label名和数字的对应关系字典
-                lbl, lbl_names = utils.shape.labelme_shapes_to_label(img.shape, data['shapes'],
-                                                                     isClose=False)  # data['shapes']是json文件中记录着标注的位置及label等信息的字段
-                out_dir = out + osp.basename(list[i])[:-5]
-                out_dir = osp.join(osp.dirname(list[i]), out_dir)
-                if not osp.exists(out_dir):
-                    os.mkdir(out_dir)
-                PIL.Image.fromarray(lbl).save(osp.join(out_dir, '{}_mask.png'.format(filename)))
+def main(args):
+    json_file = args.json_file
+    if json_file is None:
+        assert "json_file must be an existed path!"
+    if args.out is None:
+        out_dir = osp.join(json_file, "..", 'label_output')
+    else:
+        out_dir = args.out
+    if not osp.exists(out_dir):
+        os.mkdir(out_dir)
 
+    filelist = os.listdir(json_file)
+    for i in range(0, len(filelist)):
+        path = osp.join(json_file, filelist[i])
+        if osp.splitext(filelist[i])[-1] == ".json":
+            data = json.load(open(path))
+            imageData = data.get("imageData")
 
-def checkmsak():
-    mask = Image.open('./testimage/back10166/back10166_mask.png').convert('L')
-    im = Image.open('./testimage/back10166.png')
-    mask1 = mask
-    mask.putpalette([0, 0, 0,
-                     255, 0, 0,
-                     0, 0, 0])
-    # mask1 = np.array(mask1)
-    # bmask = mask1
-    # bmask = bmask.astype(np.bool8)
-    # color_mask = np.array([255, 0, 0], dtype=np.uint8)
-    # im = np.array(im)
-    # im[bmask] = im[bmask] * 0.5 + color_mask * 0.5
-    # im = Image.fromarray(im)
-    mask.show()
-    # im.show()
+            if not imageData:
+                imagePath = os.path.join(os.path.dirname(json_file), data["imagePath"])
+                with open(imagePath, "rb") as f:
+                    imageData = f.read()
+                    imageData = base64.b64encode(imageData).decode("utf-8")
+            img = utils.img_b64_to_arr(imageData)
 
-
-def lwlabel(file_path, out_path):
-    file_list = os.listdir(file_path)
-    parent_path = ["train", "val"]
-    child_path = ["Image", "Label", "visual"]
-    for parent in parent_path:
-        temp_path = os.path.join(out_path, parent)
-        if not osp.exists(temp_path):
-            os.mkdir(temp_path)
-        for child in child_path:
-            temp_path = os.path.join(out_path, parent, child)
-            if not osp.exists(temp_path):
-                os.mkdir(temp_path)
-    train_file_path = os.path.join(out_path, "train")
-    val_file_path = os.path.join(out_path, "val")
-    color_list = [[0, 255, 255],
-                  [0, 255, 0],
-                  [255, 0, 0],
-                  [255, 255, 0]]
-    a, b = 150, 650
-    # from sklearn.model_selection import train_test_split
-    # train, test = train_test_split(file_list, test_size=0.2, random_state=42)
-    # file_list = test
-    # file_list = ["Q226.json"]
-    train_num, val_num = 0, 0
-    isTest = True
-    for i in range(0, len(file_list)):
-        path = os.path.join(file_path, file_list[i])  # 获取每个json文件的绝对路径
-        filename = file_list[i][:-5]  # 提取出.json前的字符作为文件名，以便后续保存Label图片的时候使用
-        extension = file_list[i][-4:]
-        if extension == 'json':
-            if os.path.isfile(path):
-                random_num = random.randint(0, 100)
-                data = json.load(open(path))
-                img = cv2.imread(os.path.join(file_path, filename) + '.jpg', 1)
-                # img = utils.image.img_b64_to_arr(data['imageData'])  # 根据'imageData'字段的字符可以得到原图像
-                # remember to change the "label_name_to_value"
-                lbl, lbl_names = utils.shape.labelme_shapes_to_label(img.shape, data['shapes'], line_width=1, isClose=True)
-                # img = img[a:, (b-400):(b+400)]
-                # lbl = lbl[a:, (b-400):(b+400)]
-                # img = img[:, 300:1000, :]
-                # lbl = lbl[:, 300:1000]
-                if random_num < 80 and not isTest:
-                    cv2.imwrite(osp.join(train_file_path, 'Label', '{}.png'.format(str(train_num))), lbl.astype(np.uint8))
-                    cv2.imwrite(osp.join(train_file_path, 'Image', '{}.jpg'.format(str(train_num))), img.astype(np.uint8))
-                    train_num += 1
+            label_name_to_value = {"_background_": 0}
+            for shape in sorted(data["shapes"], key=lambda x: x["label"]):
+                label_name = shape["label"]
+                if label_name in label_name_to_value:
+                    label_value = label_name_to_value[label_name]
                 else:
-                    cv2.imwrite(osp.join(val_file_path, 'Label', '{}.png'.format(str(val_num))), lbl.astype(np.uint8))
-                    cv2.imwrite(osp.join(val_file_path, 'Image', '{}.jpg'.format(str(val_num))), img.astype(np.uint8))
-                    val_num += 1
-                # PIL.Image.fromarray(lbl).save(osp.join(out_path, '{}_mask.png'.format(filename)), format='PNG')
-                # PIL.Image.fromarray(img).save(osp.join(out_path, '{}.png'.format(filename)))
-                # img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-                for j in range(1, lbl.max()+1):
-                    temp = lbl.copy()
-                    temp[temp != j] = 0
-                    temp[temp == j] = 1
-                    temp = temp.astype(np.bool8)
-                    color_mask = np.array(color_list[j-1], dtype=np.uint8)
-                    img[temp] = img[temp] * 0.8 + color_mask * 0.2
-                if random_num < 80 and not isTest:
-                    cv2.imwrite(osp.join(train_file_path, 'visual', '{}_visual.jpg'.format(str(train_num))),
-                                img.astype(np.uint8))
-                else:
-                    cv2.imwrite(osp.join(val_file_path, 'visual', '{}_visual.jpg'.format(str(val_num))),
-                                img.astype(np.uint8))
-                cv2.waitKey(5)
-                # PIL.Image.fromarray(img).save(osp.join(out_visual, '{}_visual.png'.format(filename)))
-    print(train_num)
-    print(val_num)
+                    label_value = len(label_name_to_value)
+                    label_name_to_value[label_name] = label_value
+            lbl, _ = utils.shapes_to_label(
+                img.shape, data["shapes"], label_name_to_value, isClose=args.isClose
+            )
+
+            label_names = [None] * (max(label_name_to_value.values()) + 1)
+            for name, value in label_name_to_value.items():
+                label_names[value] = name
+
+            lbl_viz = imgviz.label2rgb(
+                label=lbl, img=imgviz.asgray(img), label_names=label_names, loc="rb"
+            )
+
+            PIL.Image.fromarray(img).save(osp.join(out_dir, "img.png"))
+            cv2.imwrite(osp.join(out_dir, "label.png"), lbl)
+            # utils.lblsave(osp.join(out_dir, "label.png"), lbl)
+            PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, "label_viz.png"))
+
+            with open(osp.join(out_dir, "label_names.txt"), "w") as f:
+                for lbl_name in label_names:
+                    f.write(lbl_name + "\n")
+
+    logger.info("Saved to: {}".format(out_dir))
 
 
 if __name__ == '__main__':
-    # main()
-    # print('Finished!')
-    # checkmsak()
-    file_path = "E:/OneDrive/My_paper/Program/xsStereoVision/data/HomographyTransform/3/test_10mm304_520A-560A"
-    save_path = "E:/OneDrive/My_paper/Program/xsStereoVision/data/HomographyTransform/3/data"
-    lwlabel(file_path, save_path)
-    # img = cv2.imread("E:\OneDrive\My_paper\Program\Gapcontrol\data\\0713\\train\weldpool\\test\\test\\35_mask.png", 0)
-    # img = img * 100
-    # print(np.max(img))
-    # cv2.imshow("s", img)
-    # cv2.waitKey()
+    parser = argparse.ArgumentParser(description='XiaoShun jsontodataset')
+    parser.add_argument('-jf', '--json_file', default=None, type=str,
+                        help='Path to the json files')
+    parser.add_argument('-o', '--out', default=None, type=str,
+                        help='Output Path for dataset')
+    args = parser.parse_args()
+    main(args)

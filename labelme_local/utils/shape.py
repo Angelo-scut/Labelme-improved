@@ -45,6 +45,14 @@ def ellipse_with_angle(im, x, y, major, minor, angle, color, thickness=3):
     # im.paste(rotated, (int(x-rx/2), int(y-ry/2)))
     return ellipse_im
 
+def is_livewire_close_enough(xy):
+    spoint = xy[0]
+    tpoint = xy[-1]
+    if abs(spoint[0] - tpoint[0]) + abs(spoint[1] - tpoint[1]) < 10:
+        return True
+    else:
+        return False
+
 def shape_to_mask(
     img_shape, points, shape_type=None, line_width=10, point_size=5, isClose = False
 ):
@@ -80,13 +88,22 @@ def shape_to_mask(
                           (ax - cx + np.finfo(float).eps))
         # ob_label = [cx/img_shape[1], cy/img_shape[0], a/img_shape[1], b/img_shape[0], angle]
         # angle = angle * 180 / math.pi
-        ellipse_with_angle(mask, cx, cy, a, b, angle, (255,))
+        mask = ellipse_with_angle(mask, cx, cy, a, b, angle, (255,), thickness=-1)
+        # if isClose:
+        #     mask = ellipse_with_angle(mask, cx, cy, a, b, angle, (255,), thickness=-1)
+        # else:
+        #     mask = ellipse_with_angle(mask, cx, cy, a, b, angle, (255,))
     elif shape_type == "livewire":
-        if isClose:
-            assert len(xy) > 2, "Polygon must have points more than 2"
+        assert len(xy) > 2, "Livewire must have points more than 2"
+        if is_livewire_close_enough(xy):
             draw.polygon(xy=xy, outline=1, fill=1)
         else:
             draw.line(xy=xy, fill=1, width=line_width)
+        # if isClose:
+        #     assert len(xy) > 2, "Polygon must have points more than 2"
+        #     draw.polygon(xy=xy, outline=1, fill=1)
+        # else:
+        #     draw.line(xy=xy, fill=1, width=line_width)
     else:
         assert len(xy) > 2, "Polygon must have points more than 2"
         draw.polygon(xy=xy, outline=1, fill=1)
