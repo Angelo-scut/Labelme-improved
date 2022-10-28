@@ -5,6 +5,7 @@ This repo is improved from labelme with python-qt version:
 https://github.com/wkentaro/labelme
 
 ## Requirments
+python==3.7.10
 ```bash
 pip install -r requirements.txt
 ```
