@@ -11,6 +11,8 @@
       <sourceFolder url="file://$MODULE_DIR$/labelme/build/lib.win-amd64-3.7" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/labelme/myLiveWire" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/labelme/cython" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/labelme_local" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (labelme)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
