@@ -19,6 +19,13 @@ pip install labelme==4.5.7
 pip install opencv-python==4.5.2.52
 pip install cython
 ```
+## Compile C++ wrapper
+### Linux
+```bash
+cd labelme_local/cython
+python setup.py build_ext --inplace
+cd ..
+```
 
 ## How To Use
 ```
